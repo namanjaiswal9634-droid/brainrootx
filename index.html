@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Brainrootx</title>
+
+  <meta name="theme-color" content="#1a73e8" />
+  <link rel="icon" type="image/png" href="logo.png" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style10.css">
+</head>
+<body>
+  <div id="app" class="app">
+  <header class="appbar">
+  <div class="brand">
+    <img src="logo.png" alt="BrainRootX logo" class="brand-logo" />
+    <h1>Brain<span class="accent">RootX</span></h1>
+  </div>
+
+  <div class="appbar-actions" role="toolbar" aria-label="App actions">
+    <!-- Theme toggle (Dark/Light) -->
+    <button id="themeToggle" class="chip chip-outline" title="Toggle theme" aria-pressed="false">
+      <span class="chip-icon" aria-hidden="true">🌙</span>
+      <span class="chip-label">Dark</span>
+    </button>
+
+    <!-- Voice toggle -->
+    <button id="voiceToggle" class="chip" title="Toggle voice" aria-pressed="true">
+      <span class="chip-icon" aria-hidden="true">🔊</span>
+      <span class="chip-label">Voice ON</span>
+    </button>
+  </div>
+</header>
+
+
+
+<!-- AUTH -->
+<section id="auth" class="screen active">
+  <div class="auth-card card">
+    <h2>Welcome to <span class="accent">Brainrootx</span></h2>
+    <p class="muted">
+      Learn English & Math with voice guidance. Save your streaks with an account.
+    </p>
+
+    <!-- Sign up form (primary) -->
+<form id="signupForm" class="form" autocomplete="on">
+  <!-- Full name -->
+  <div class="row">
+    <label>Full Name</label>
+    <!-- call updateCreateBtn while typing (also used by your JS to auto-generate username) -->
+    <input type="text" name="name" placeholder="e.g., Aditi Sharma" required oninput="updateCreateBtn()" />
+  </div>
+
+  <!-- Username (auto-generated) -->
+  <div class="row">
+    <label>Username</label>
+    <!-- keep id for your JS and call updateCreateBtn while editing -->
+    <input type="text" name="username" id="usernameInput" placeholder="e.g., aditi.sharma" minlength="3" required oninput="updateCreateBtn()" />
+    <p id="usernameStatus" class="tiny muted"></p>
+  </div>
+
+  <!-- Email -->
+  <div class="row">
+    <label>Email</label>
+    <!-- call updateCreateBtn while typing -->
+    <input type="email" name="email" placeholder="you@example.com" required oninput="updateCreateBtn()" />
+  </div>
+
+  <!-- Password -->
+  <div class="row">
+    <label>Password</label>
+    <!-- call updateCreateBtn while typing -->
+    <input type="password" name="password" placeholder="Minimum 6 characters" minlength="6" required oninput="updateCreateBtn()" />
+  </div>
+
+  <!-- Final create account -->
+  <!-- Keep the button initially disabled — updateCreateBtn will enable it when criteria met -->
+  <button type="submit" id="createAccountBtn" class="btn btn-primary" disabled>
+    Create account
+  </button>
+
+  <p class="tiny muted" style="margin-top:12px">Or continue with</p>
+
+  <div class="row row-inline" style="margin-bottom:6px">
+    <button type="button" id="googleSignBtn" class="btn btn-ghost social google">Sign up with Google</button>
+    <button type="button" id="fbSignBtn" class="btn btn-ghost social facebook">Sign up with Facebook</button>
+  </div>
+
+  <p class="tiny muted">
+    Your streaks & leaderboard are saved to the cloud when signed in.
+  </p>
+
+  <p class="tiny muted" style="margin-top:12px">
+    Already have an account? <a href="#" id="openLoginLink">Log in</a>
+  </p>
+</form>
+
+
+  <!-- LOGIN MODAL (hidden) -->
+  <div id="loginModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content card">
+      <button class="modal-close" id="closeLoginModal">✕</button>
+      <h3>Log in</h3>
+      <form id="loginFormModal" class="form" autocomplete="on">
+        <div class="row">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="you@example.com" required />
+        </div>
+        <div class="row">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Your password" minlength="6" required />
+        </div>
+        <div class="row row-inline">
+          <button type="submit" class="btn btn-primary">Log in</button>
+          <button type="button" id="demoLoginModal" class="btn btn-ghost">Continue without account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+
+    <!-- MAIN MENU -->
+    <section id="menu" class="screen">
+      <div class="greet card">
+        <h2 id="greetText">Hi! I’m <span class="accent">BrainRootX</span> 👋</h2>
+
+        <p>Tap a module below. Your daily progress and streaks are tracked.</p>
+        <div class="streakbar">
+          <span>🔥 Streak: <b id="streakCount">0</b> days</span>
+          <span class="dot"></span>
+          <span>Today: <b id="todayStatus">Not completed</b></span>
+        </div>
+      </div>
+
+      <div class="grid">
+  <button class="card nav" data-target="dictionary">
+    <div class="icon i-dictionary"></div>
+    <h3>Dictionary</h3>
+    <p>Meaning, pronunciation & examples. Voice search supported.</p>
+  </button>
+
+  <!-- Updated English Learning Card -->
+<button class="card nav" data-target="englishLearning">
+  <div class="icon i-book"></div>
+  <h3>English Learning</h3>
+  <p>30 Levels • Unlock with XP • Earn rank badges 🏅</p>
+</button>
+
+
+
+  <button class="card nav" data-target="childABC">
+    <div class="icon i-abc"></div>
+    <h3>Child ABC</h3>
+    <p>A–Z with pictures & slow pronunciation.</p>
+  </button>
+
+  <button class="card nav" data-target="childMath">
+    <div class="icon i-math"></div>
+    <h3>Child Math</h3>
+    <p>10 daily questions, class-wise. Voice feedback.</p>
+  </button>
+
+  <button class="card nav" data-target="englishQuiz">
+    <div class="icon i-quiz"></div>
+    <h3>English Quiz</h3>
+    <p>Daily 10 MCQs, fresh for 30 days.</p>
+  </button>
+
+  <button class="card nav" data-target="tables">
+    <div class="icon i-table"></div>
+    <h3>Maths Tables</h3>
+    <p>Tables 1–40 + quick 5Q test.</p>
+  </button>
+ 
+  <button class="card nav" data-target="science">
+    <div class="icon i-flask"></div>
+    <h3>Science</h3>
+    <p>Science Quiz (Class 3–10) • Learn Science         (coming soon)</p>
+ </button>
+
+
+  <button class="card nav" data-target="gk">
+    <div class="icon i-globe"></div>
+    <h3>General Knowledge</h3>
+    <p>100 GK Qs + random 10Q quiz.</p>
+  </button>
+
+  <button class="card nav" data-target="leaderboard">
+    <div class="icon i-trophy"></div>
+    <h3>Leaderboards</h3>
+    <p>Ranks by streak days. Top 3 get medals.</p>
+  </button>
+
+  <button class="card nav" data-target="speaking">
+    <div class="icon i-mic"></div>
+    <h3>English Speaking</h3>
+    <p>Guided voice lessons with pronunciation feedback.</p>
+  </button>
+
+  <button class="card nav" data-target="modernWords">
+    <div class="icon i-spark"></div>
+    <h3>Modern Words</h3>
+    <p>Gen-Z words with meanings & audio.</p>
+  </button>
+
+  <button class="card nav" data-target="miniGames">
+    <div class="icon i-game"></div>
+    <h3>Mini Games</h3>
+    <p>Play 3 fun English games — save your high scores!</p>
+  </button>
+
+  <!-- NEW: Profile -->
+  <button class="card nav" data-target="profile">
+    <div class="icon i-profile"></div>
+    <h3>Profile</h3>
+    <p>Your info, theme, streak, export & reset.</p>
+  </button>
+
+   <!-- NEW: Community Chat -->
+  <button class="card nav" data-target="community">
+    <div class="icon i-chat"></div>
+    <h3>Community Chat</h3>
+    <p>Ask doubts, share tips, and learn together.</p>
+  </button>
+
+  <!-- Locked Features -->
+  <button class="card nav locked" data-locked="true">
+    <div class="icon i-locked"></div>
+    <h3>Story Mode 🔒</h3>
+    <p>Coming Soon...</p>
+  </button>
+
+  <button class="card nav locked" data-locked="true">
+    <div class="icon i-locked"></div>
+    <h3>Level System 🔒</h3>
+    <p>Coming Soon...</p>
+  </button>
+
+  <button class="card nav locked" data-locked="true">
+    <div class="icon i-locked"></div>
+    <h3>AI Tutor 🔒</h3>
+    <p>Coming Soon...</p>
+  </button>
+</div> <!-- 👈 CLOSE the grid properly here -->
+</section>
+
+<!-- (Other sections abbreviated but kept in project) -->
+<!-- Dictionary (UPDATED with Hindi translation) -->
+<section id="dictionary" class="screen">
+  <div class="toolbar">
+    <button class="menu-btn">← Menu</button>
+    <h2>Dictionary</h2>
+  </div>
+
+  <div class="card">
+    <!-- Search row -->
+    <form id="dictForm" class="row-inline" aria-label="Dictionary search">
+      <label for="dictInput" class="tiny" style="display:none">Search word</label>
+      <input id="dictInput" type="text" placeholder="Type a word, e.g., 'serene'" required aria-label="Type a word" />
+      <button class="btn btn-primary" type="submit" title="Search">Search</button>
+      <button id="dictVoice" class="btn btn-ghost" type="button" title="Voice search" aria-pressed="false">🎤</button>
+    </form>
+
+    <!-- Translation row -->
+    <div style="margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <button id="dictTranslate" class="btn btn-ghost" type="button" title="Translate to Hindi">⇄ Translate to Hindi</button>
+      <div id="dictTransResult" class="tiny muted" aria-live="polite"></div>
+    </div>
+
+    <!-- Controls row (auto-speak toggle, Word of the Day) -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px">
+        <input id="dictAutoSpeak" type="checkbox" checked />
+        <label for="dictAutoSpeak" class="tiny muted">Auto-speak definitions</label>
+      </div>
+
+      <div id="dictWotd" class="tiny muted" aria-live="polite" style="text-align:right">
+        <!-- optional Word of the Day injected here -->
+      </div>
+    </div>
+
+    <!-- Result area -->
+    <div id="dictResult" class="dict-result" style="margin-top:12px" aria-live="polite"></div>
+
+    <!-- Meta area: recent searches + favorites (JS will populate if present) -->
+    <div id="dictMetaWrap" class="card" style="margin-top:12px; padding:10px;"></div>
+  </div>
+
+  <!-- Offscreen live region for extra accessibility -->
+  <div id="dictLiveRegion" aria-live="polite" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"></div>
+</section>
+
+<!-- English Learning -->
+<section id="englishLearning" class="screen">
+  <!-- Levels Page -->
+  <div id="brx-english-levels" class="brx-panel">
+    <div class="toolbar" role="toolbar" aria-label="English Learning toolbar">
+      <!-- compact menu button -->
+      <button class="menu-btn" id="brx-menu-btn" onclick="brxEnglish.closeLevels()" aria-expanded="false">☰</button>
+
+      <!-- title + progress bar -->
+      <div class="title-wrap">
+        <h2 id="brx-el-title">English Learning</h2>
+        <div id="brx-progress-row" class="progress-row">
+          <div class="progress-bar-outer" aria-hidden="true">
+            <div id="brx-progress-bar" class="progress-bar-inner" style="width:0%"></div>
+          </div>
+          <div id="brx-progress-text" class="progress-text" aria-live="polite">
+            0 XP to next level
+          </div>
+        </div>
+      </div>
+
+      <!-- XP status -->
+      <div class="brx-xp-wrap" aria-label="XP status">
+        <div id="brx-xp-display" class="xp-display">
+          XP: <strong id="brx-xp-value">0</strong>
+        </div>
+        <div id="brx-next-cost" class="next-cost">
+          Next: <span id="brx-xp-next">0</span> XP
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge strip (swipeable on mobile) -->
+    <div
+      id="brx-badge-strip"
+      class="brx-badge-strip"
+      role="list"
+      aria-label="Unlocked badges"
+    ></div>
+
+    <!-- Levels container -->
+    <div id="brx-levels-container" class="brx-contents">
+      <div
+        id="brx-levels-grid"
+        class="brx-levels-grid"
+        role="list"
+        aria-label="Levels roadmap"
+      >
+        <!-- level cards injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Page -->
+  <div id="brx-english-test" class="brx-panel hidden" tabindex="-1">
+    <div class="toolbar">
+      <button class="menu-btn" onclick="brxEnglish.closeTest()">← Back</button>
+      <h2 id="brx-test-title">Test</h2>
+      <div id="brx-test-meta" class="brx-small-muted">
+        10 Questions — pass >= 70%
+      </div>
+    </div>
+
+    <!-- Question progress bar -->
+    <div id="brx-test-progressbar">
+      <span></span>
+    </div>
+
+    <!-- Questions injected here -->
+    <div
+      id="brx-test-questions"
+      class="brx-test-questions"
+      aria-live="polite"
+    ></div>
+
+    <div class="brx-test-actions">
+      <div id="brx-test-progress" class="brx-small-muted"></div>
+      <button
+        class="brx-btn brx-btn-primary"
+        onclick="brxEnglish.submitTest()"
+      >
+        Submit
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<!-- Child ABC (clean: trace removed) -->
+<section id="childABC" class="screen" aria-label="Child ABC learning" role="region" aria-labelledby="abcHeading">
+  <div class="toolbar">
+    <button class="menu-btn" type="button" data-action="back-to-menu">← Menu</button>
+    <h2 id="abcHeading">Learn ABC</h2>
+  </div>
+
+  <div class="card">
+    <!-- Preview / controls -->
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+      <div id="abcPreview" style="flex:1;min-width:220px">
+        <div id="abcBig" aria-live="polite" style="display:flex;align-items:center;gap:12px;">
+          <div id="abcLetterLarge" style="font-size:72px; font-weight:800;" aria-hidden="true"></div>
+          <div id="abcImageLarge" style="font-size:42px;" aria-hidden="true"></div>
+          <div id="abcWordLarge" class="tiny muted" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="abcAutoPlay" class="btn btn-primary" type="button" aria-pressed="false" aria-controls="abcGrid">▶ Auto Play</button>
+        <button id="abcQuizBtn" class="btn btn-ghost" type="button" aria-controls="childABCQuiz">🎮 Quiz Mode</button>
+        <label class="tiny muted" style="margin-left:8px">
+          <input id="abcVoiceToggle" type="checkbox" aria-label="Enable voice" checked /> Voice
+        </label>
+      </div>
+    </div>
+
+    <!-- Grid of letters -->
+    <div id="abcGrid" class="abc-grid" style="margin-top:12px" role="list" aria-label="Alphabet letters"></div>
+  </div>
+</section>
+
+<!-- Child ABC Quiz Screen (separate screen) -->
+<section id="childABCQuiz" class="screen" aria-label="ABC Quiz" role="region" aria-labelledby="abcQuizHeading">
+  <div class="toolbar">
+    <button class="menu-btn" type="button" data-action="back-to-abc">← Back</button>
+    <h2 id="abcQuizHeading">ABC Quiz</h2>
+  </div>
+
+  <div class="card">
+    <!-- Intro / settings -->
+    <div id="quizIntro">
+      <p style="margin:0 0 8px 0">Test your ABC skills! Choose number of questions:</p>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <label class="tiny muted">Questions:
+          <select id="quizLength" class="tiny" aria-label="Number of questions">
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="26">26</option>
+          </select>
+        </label>
+        <label class="tiny muted">Mode:
+          <select id="quizMode" class="tiny" aria-label="Quiz mode">
+            <option value="image->letter">Image → Letter</option>
+            <option value="letter->word">Letter → Word</option>
+            <option value="mixed">Mixed (both)</option>
+          </select>
+        </label>
+
+        <button id="quizStartBtn" class="btn btn-primary" type="button">Start Quiz</button>
+        <button id="quizBackBtn" class="btn btn-ghost" type="button">Return</button>
+      </div>
+    </div>
+
+    <!-- Active quiz area -->
+    <div id="quizArea" style="display:none; margin-top:12px;">
+      <div id="quizProgress" class="tiny muted">Question <span id="quizIndex">1</span> / <span id="quizTotal">10</span></div>
+
+      <div id="quizQuestion" style="margin-top:12px; min-height:120px; display:flex;align-items:center;justify-content:center; flex-direction:column;" aria-live="polite"></div>
+
+      <div id="quizOptions" style="margin-top:12px; display:grid; gap:10px;" role="list" aria-label="Answer options"></div>
+
+      <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+        <button id="quizNextBtn" class="btn btn-primary" type="button" disabled>Next</button>
+        <button id="quizQuitBtn" class="btn btn-ghost" type="button">Quit</button>
+        <div id="quizFeedback" class="tiny muted" style="margin-left:auto" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="quizResult" style="display:none; margin-top:12px;" aria-live="polite">
+      <h3 id="quizScoreHeader">Your score</h3>
+      <div style="font-size:20px;font-weight:700" id="quizScore"></div>
+      <p id="quizSummary" class="muted"></p>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button id="quizRetryBtn" class="btn btn-primary" type="button">Try Again</button>
+        <button id="quizReturnBtn" class="btn btn-ghost" type="button">Return to ABC</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+    <!-- Child Math -->
+    <section id="childMath" class="screen">
+      <div class="toolbar">
+        <button class="menu-btn">← Menu</button>
+        <h2>Child Math – Daily 10</h2>
+      </div>
+      <div class="card">
+        <label>Select Class:</label>
+        <select id="mathClass"></select>
+        <button id="startDailyMath" class="btn btn-primary">Start Today’s 10</button>
+        <div id="mathQuiz" class="quiz"></div>
+      </div>
+    </section>
+
+    <!-- English Quiz -->
+    <section id="englishQuiz" class="screen">
+      <div class="toolbar">
+        <button class="menu-btn">← Menu</button>
+        <h2>English Quiz – Daily 10</h2>
+      </div>
+      <div class="card">
+        <label>Select Class:</label>
+        <select id="engQuizClass"></select>
+        <button id="startDailyEnglish" class="btn btn-primary">Start Today’s 10</button>
+        <div id="englishQuizBox" class="quiz"></div>
+      </div>
+    </section>
+
+<!-- Tables -->
+<section id="tables" class="screen">
+  <div class="toolbar" role="toolbar" aria-label="Maths Tables toolbar">
+    <button class="menu-btn" id="tablesMenuBtn">← Menu</button>
+    <h2>Maths Tables (1–40)</h2>
+
+    <!-- Progress & Help (top-right) -->
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button id="progressBtn" class="btn btn-ghost">Progress</button>
+      <button id="helpBtn" class="btn btn-ghost">Help</button>
+    </div>
+  </div>
+
+  <!-- TABLE GRID -->
+  <div id="tablesWrap" class="tables-wrap" style="margin-top:12px"></div>
+
+  <!-- small footer card showing tokens -->
+  <div id="tableTokensCard" class="card" style="margin-top:14px;display:flex;align-items:center;gap:12px;justify-content:space-between;">
+    <div>
+      <strong>Table Tokens</strong>
+      <div class="tiny muted">Earn tokens by completing Table Tests</div>
+    </div>
+    <div style="font-weight:800">
+      <span id="ttTokens">0</span> TT
+    </div>
+  </div>
+</section>
+
+<!-- Table detail / hub screen -->
+<section id="tableView" class="screen" aria-hidden="true">
+  <div class="toolbar">
+    <button class="menu-btn" id="tableBackBtn">← Back</button>
+    <h2 id="tableViewTitle">Table</h2>
+    <div style="margin-left:auto"></div>
+  </div>
+
+  <div class="card">
+    <div id="tableList" style="display:flex;flex-direction:column;gap:6px"></div>
+
+    <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap">
+      <!-- open dedicated pages -->
+      <button id="practiceBtn" class="btn btn-primary">Practice Table (No timer)</button>
+      <button id="testBtn" class="btn btn-ghost">Table Test (Timed) — Earn TT Tokens</button>
+    </div>
+
+    <div id="tableInteractive" style="margin-top:16px"></div>
+  </div>
+</section>
+
+<!-- Practice Page (NEW) - NOTE: practiceMistakesBtn removed -->
+<section id="practiceView" class="screen" aria-hidden="true">
+  <div class="toolbar">
+    <button class="menu-btn" id="practiceBackBtn">← Back</button>
+    <h2 id="practiceTitle">Practice — Table <span id="practiceTableNum">?</span></h2>
+    <div style="margin-left:auto"></div>
+  </div>
+
+  <div class="card">
+    <div id="practiceInfo" class="tiny muted">
+      Practice mode — MCQ & Input options. No timer. Hints appear after 10s of inactivity.
+    </div>
+
+    <div id="practiceControls" style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <button id="practiceMCQBtn" class="btn btn-ghost">MCQ Mode</button>
+      <button id="practiceInputBtn" class="btn btn-ghost">Input Mode</button>
+      <!-- practiceMistakesBtn intentionally removed from markup -->
+    </div>
+
+    <!-- Area where questions will be injected by JS -->
+    <div id="practiceContent" style="margin-top:16px"></div>
+  </div>
+</section>
+
+<!-- Test Page -->
+<section id="testView" class="screen" aria-hidden="true">
+  <div class="toolbar">
+    <button class="menu-btn" id="testBackBtn">← Back</button>
+    <h2 id="testTitle">Table Test — Table <span id="testTableNum">?</span></h2>
+    <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
+      <div class="tiny muted">Time left: <strong id="testTimerTop">--</strong></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div id="testInfo" class="tiny muted">
+      Timed test — no hints. Earn TT tokens for correct answers.
+    </div>
+
+    <div id="testControls" style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <label class="tiny muted" for="testQuestionCount">Questions:</label>
+      <select id="testQuestionCount">
+        <option value="5">5</option>
+        <option value="10" selected>10</option>
+        <option value="15">15</option>
+      </select>
+
+      <label class="tiny muted" for="testTimerSelect">Timer:</label>
+      <select id="testTimerSelect">
+        <option value="30">30s</option>
+        <option value="60" selected>60s</option>
+        <option value="90">90s</option>
+      </select>
+
+      <button id="startTestBtn" class="btn btn-primary">Start Test</button>
+    </div>
+
+    <!-- Area where test MCQs will be injected by JS -->
+    <div id="testContent" style="margin-top:16px"></div>
+  </div>
+</section>
+
+<!-- Progress page -->
+<section id="tableProgress" class="screen" aria-hidden="true">
+  <div class="toolbar">
+    <button class="menu-btn" id="progressBackBtn">← Back</button>
+    <h2>Maths Table Progress</h2>
+  </div>
+
+  <div class="card" id="progressCard">
+    <!-- JS will populate progress stats -->
+  </div>
+</section>
+
+<!-- Help page -->
+<section id="tableHelp" class="screen" aria-hidden="true">
+  <div class="toolbar">
+    <button class="menu-btn" id="helpBackBtn">← Back</button>
+    <h2>Maths Table Help</h2>
+  </div>
+
+  <div class="card">
+    <h3>How it works</h3>
+    <ul>
+      <li>Tap any table button to open its page.</li>
+      <li><strong>Practice:</strong> full table practice (no timer). Hint after 10s of inactivity.</li>
+      <li><strong>Table Test:</strong> a timed test, no hints. Tokens are awarded only for Table Tests.</li>
+      <li>Tables 15–40 are locked initially — unlock them with TT tokens earned in Table Tests.</li>
+    </ul>
+    <p class="tiny muted">Menu button appears only on the first (tables) page. Other pages have Back buttons to return.</p>
+  </div>
+</section>
+
+<!-- Test/Result report -->
+<section id="tableReport" class="screen" aria-hidden="true">
+  <div class="toolbar">
+    <button class="menu-btn" id="reportBackBtn">← Back</button>
+    <h2>Test Report</h2>
+  </div>
+
+  <div class="card" id="reportCard">
+    <!-- JS will fill in the report -->
+  </div>
+</section>
+
+    <!-- Science landing: choose Quiz or Learn -->
+<section id="science" class="screen">
+  <div class="card">
+    <div class="toolbar">
+      <button class="menu-btn" data-target="menu">← Menu</button>
+      <h2>Science</h2>
+    </div>
+
+    <div class="science-landing" style="margin-top:12px">
+      <p class="muted">Pick an option. Quizzes are tailored to each class and contain 20 unique questions.</p>
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="openScienceQuiz" class="btn btn-primary">Science Quiz</button>
+        <button id="openLearnScience" class="btn btn-ghost">Learn Science (Coming Soon)</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Class selection (Class 3 → Class 10) -->
+<section id="scienceClassSelect" class="screen">
+  <div class="card">
+    <div class="toolbar">
+      <button class="menu-btn" data-target="science">← Back</button>
+      <h2>Choose Class</h2>
+    </div>
+
+    <div style="margin-top:12px" id="scienceClassGrid" class="list">
+      <!-- JS will inject class buttons here -->
+    </div>
+  </div>
+</section>
+
+<!-- Quiz runtime screen -->
+<section id="scienceQuiz" class="screen">
+  <div class="card quiz-container" id="scienceQuizContainer">
+    <div class="toolbar" style="align-items:center;">
+      <button class="menu-btn" id="scienceBackToClasses">← Classes</button>
+      <h2 id="scienceQuizTitle">Science Quiz</h2>
+
+      <div id="scienceProgressWrap" style="margin-left:12px; flex:1;">
+        <div class="progress-bar-outer" aria-hidden="true" style="height:10px; border-radius:8px;">
+          <div id="scienceProgressBar" class="progress-bar-inner" style="width:0%; height:10px; border-radius:8px; transition: width 400ms ease;"></div>
+        </div>
+        <div id="scienceProgressText" class="progress-text" style="margin-top:6px">0 / 20</div>
+      </div>
+    </div>
+
+    <div id="scienceQuestionArea" class="card" style="margin-top:12px;">
+      <!-- question + options injected here -->
+      <div id="scienceLoading" class="muted">Loading...</div>
+    </div>
+
+    <div class="game-controls" style="margin-top:12px">
+      <button id="sciencePrevBtn" class="btn btn-ghost">Prev</button>
+      <button id="scienceNextBtn" class="btn btn-primary">Next</button>
+      <button id="scienceSubmitBtn" class="btn btn-primary">Submit Quiz</button>
+    </div>
+  </div>
+</section>
+
+<!-- Results screen -->
+<section id="scienceResults" class="screen">
+  <div class="card" id="scienceResultsCard">
+    <div class="toolbar">
+      <button class="menu-btn" id="scienceResultsBack">← Back</button>
+      <h2>Quiz Results</h2>
+    </div>
+
+    <div id="scienceResultsSummary" class="card" style="margin-top:12px">
+      <!-- summary (score, percent, IQ, improvement, right/wrong) -->
+    </div>
+
+    <div id="scienceReviewList" class="list" style="margin-top:12px">
+      <!-- per-question review injected here -->
+    </div>
+
+    <div style="margin-top:12px" class="row-inline">
+      <button id="scienceRetakeBtn" class="btn btn-primary">Retake Quiz</button>
+      <button id="scienceToClassesBtn" class="btn btn-ghost">Choose Another Class</button>
+      <button id="scienceToMenuBtn" class="btn chip-outline">Back to Menu</button>
+    </div>
+  </div>
+</section>
+
+<!-- Learn Science placeholder -->
+<section id="learnScience" class="screen">
+  <div class="card">
+    <div class="toolbar">
+      <button class="menu-btn" data-target="science">← Back</button>
+      <h2>Learn Science</h2>
+    </div>
+    <div style="margin-top:12px" class="muted">
+      <p>Coming soon — step-by-step science lessons and interactive demos.</p>
+    </div>
+  </div>
+</section>
+    <!-- GK -->
+    <section id="gk" class="screen">
+      <div class="toolbar">
+        <button class="menu-btn">← Menu</button>
+        <h2>General Knowledge</h2>
+      </div>
+      <div class="card">
+        <button id="startGK" class="btn btn-primary">Start Random 10</button>
+        <div id="gkQuiz" class="quiz"></div>
+      </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section id="leaderboard" class="screen">
+      <div class="toolbar">
+        <button class="menu-btn">← Menu</button>
+        <h2>Leaderboards (by Streak Days)</h2>
+      </div>
+      <div class="card">
+        <div id="leaderWrap" class="leader"></div>
+      </div>
+    </section>
+
+    <!-- Speaking -->
+    <section id="speaking" class="screen">
+      <div class="toolbar">
+        <button class="menu-btn">← Menu</button>
+        <h2>English Speaking Coach</h2>
+      </div>
+      <div class="card">
+        <p>Tap a lesson, listen, then press <b>I can speak</b> and repeat. You’ll get feedback.</p>
+        <div id="speakLessons" class="list"></div>
+      </div>
+    </section>
+
+    <!-- Modern Words -->
+    <section id="modernWords" class="screen">
+      <div class="toolbar">
+        <button class="menu-btn">← Menu</button>
+        <h2>Modern English (Gen-Z) Words</h2>
+      </div>
+      <div class="card">
+        <div id="modernList" class="list"></div>
+      </div>
+    </section>
+
+   <!-- Mini Games -->
+<section id="miniGames" class="screen">
+  <div class="toolbar">
+    <button class="menu-btn">← Menu</button>
+    <h2>Mini Games — English Fun</h2>
+  </div>
+
+  <div class="card">
+    <p class="muted">
+      Three games for kids: <b>Spelling Bee</b>, <b>Word Match</b>, and <b>Word Race</b>. 
+      High scores are saved (device & cloud).
+    </p>
+
+    <div class="game-controls">
+      <button id="openSpelling" class="btn btn-primary">Spelling Bee</button>
+      <button id="openMatch" class="btn btn-primary">Word Match</button>
+      <button id="openRace" class="btn btn-primary">Word Race (30s)</button>
+    </div>
+
+    <div id="gameArea" class="game-area"></div>
+
+    <div class="card" style="margin-top:12px;">
+      <h4>Your Game High Scores</h4>
+      <div id="gameHighscores" class="list"></div>
+    </div>
+  </div>
+</section> <!-- ✅ Mini Games closed cleanly -->
+
+
+<!-- ================= PROFILE ================= -->
+<section id="profile" class="screen">
+  <div class="toolbar">
+    <button class="menu-btn">← Menu</button>
+    <h2>Profile</h2>
+  </div>
+
+  <div class="card profile-card">
+    <div class="profile-header">
+      <div class="avatar" id="profileAvatar">SR</div>
+      <div class="profile-ids">
+        <h3 id="profileName">Learner</h3>
+        <p class="muted tiny">Username: <b id="profileUsernameShow">—</b></p>
+        <p class="muted tiny">Email: <b id="profileEmail">—</b></p>
+        <p class="muted tiny">UID: <span id="profileUID">local</span></p>
+      </div>
+    </div>
+
+    <div class="profile-stats">
+      <div class="stat">
+        <div class="stat-num" id="profileStreak">0</div>
+        <div class="stat-lbl">Streak Days</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="profileToday">No</div>
+        <div class="stat-lbl">Today Done?</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="profileLast">—</div>
+        <div class="stat-lbl">Last Streak</div>
+      </div>
+    </div>
+
+    <hr class="soft" />
+
+    <form id="profileForm" class="form">
+      <div class="row">
+        <label>Full Name</label>
+        <input id="pfName" type="text" placeholder="Your full name" />
+      </div>
+      <div class="row">
+        <label>Username</label>
+        <input id="pfUsername" type="text" placeholder="e.g., aditi.sharma" minlength="3" />
+      </div>
+      <div class="row">
+        <label>Phone</label>
+        <input id="pfPhone" type="tel" placeholder="+91 98765 43210" />
+      </div>
+
+      <div class="row-inline">
+        <button id="profileSaveBtn" type="button" class="btn btn-primary">Save Changes</button>
+        <button id="profileCopyUid" type="button" class="btn btn-ghost">Copy UID</button>
+      </div>
+    </form>
+
+    <div class="profile-actions">
+      <button id="downloadDataBtn" class="btn btn-ghost">Download My Data (JSON)</button>
+      <button id="resetLocalBtn" class="btn btn-ghost">Reset Local Data</button>
+      <button id="profileLogoutBtn" class="btn btn-ghost">Logout</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= COMMUNITY CHAT (updated for Supabase chat) ================= -->
+<section id="community" class="screen" aria-labelledby="communityTitle" role="region">
+  <div class="toolbar">
+    <button class="menu-btn" type="button" aria-label="Back to menu">← Menu</button>
+    <h2 id="communityTitle">Community Chat</h2>
+
+    <!-- Shows the user's public chat name once set; button to change it -->
+    <div class="username-area" id="chatNameDisplay" aria-live="polite">
+      <span class="muted tiny">You:</span>
+      <strong id="myChatName">—</strong>
+      <button id="changeChatNameBtn" class="btn tiny" type="button" title="Change chat name">Edit</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="muted tiny">
+      Real-time via Supabase; otherwise uses local device storage. Be kind — names are public but likes are anonymous ✌️
+    </p>
+
+    <div class="tabs" id="chatTabs" role="tablist" aria-label="Chat channels">
+      <button class="tab active" data-channel="general" role="tab" aria-selected="true">#general</button>
+      <button class="tab" data-channel="doubts" role="tab" aria-selected="false">#doubts</button>
+      <button class="tab" data-channel="tips" role="tab" aria-selected="false">#tips</button>
+    </div>
+
+    <!-- Chat message list (rendered by JS). Messages inserted here. -->
+    <div id="chatList" class="chat-list" role="log" aria-live="polite" aria-relevant="additions"></div>
+
+    <!-- Small template for JS to clone (keeps markup consistent) -->
+    <template id="chatMessageTemplate">
+      <div class="chat-msg">
+        <div class="chat-badge" aria-hidden="true">SR</div>
+        <div class="chat-bubble">
+          <div class="chat-meta">
+            <span class="name">User</span>
+            <span class="time">00:00</span>
+          </div>
+          <div class="chat-text">Message text</div>
+          <div class="chat-actions">
+            <button class="like-btn" type="button" aria-label="Like message" data-id="">👍 <span class="like-count">0</span></button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div class="chat-input">
+      <input id="chatInput" type="text" placeholder="Type a message and press Send" aria-label="Type a message" />
+      <button id="chatSend" class="btn btn-primary" type="button">Send</button>
+    </div>
+
+    <p class="tiny muted" id="chatStatus" aria-live="polite">Connected (or offline fallback)</p>
+  </div>
+</section>
+
+<!-- --------- Chat name modal (first-time required) --------- -->
+<div id="chatNameModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="chatNameModalTitle" aria-hidden="true" style="display:none;">
+  <div class="modal-wrap">
+    <header>
+      <h3 id="chatNameModalTitle">Choose your public chat name</h3>
+      <button id="closeChatNameModal" class="btn tiny" aria-label="Close">✖</button>
+    </header>
+
+    <main>
+      <p class="muted tiny">This name will be visible to everyone in chat. It must be <strong>unique</strong>.</p>
+
+      <label for="chatNameInput" class="muted tiny">Chat name</label>
+      <input id="chatNameInput" type="text" maxlength="24" placeholder="Enter a unique chat name" aria-describedby="chatNameFeedback" />
+
+      <div id="chatNameFeedback" class="muted tiny" role="status" aria-live="polite"></div>
+    </main>
+
+    <footer>
+      <button id="saveChatNameBtn" class="btn btn-primary" type="button">Save name</button>
+      <button id="cancelChatNameBtn" class="btn" type="button">Cancel</button>
+    </footer>
+  </div>
+</div>
+
+<!-- ================= end Community Chat updated ================= -->
+
+
+<footer class="footer">
+  © 2025 Brainrootx | Powered by 
+  <a href="https://veltrion.in" target="_blank" rel="noopener">Veltrionx</a>
+</footer>
+</div> <!-- 👈 closing wrapper div from the top of body -->
+
+
+
+<!-- Streak Claim Modal -->
+<div id="streakModal" class="streak-modal hidden" aria-hidden="true">
+  <div class="streak-card">
+    <div class="streak-header">🎉 Claim your streak</div>
+    <div class="streak-body">
+      <p id="streakText">You completed today's quiz!</p>
+      <p class="big"><b id="streakDay">Day 1</b></p>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+        <button id="streakClaimBtn" class="btn btn-primary">Claim Streak</button>
+        <button id="streakLaterBtn" class="btn btn-ghost">Claim Later</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<!-- Unlock Modal -->
+<div id="brx-unlock-modal" class="brx-modal hidden">
+  <div class="brx-modal-card">
+    <h3 id="brx-unlock-title">Unlock Level</h3>
+    <p id="brx-unlock-body"></p>
+    <div class="brx-modal-actions">
+      <button class="brx-btn" onclick="brxEnglish.hideUnlock()">Cancel</button>
+      <button id="brx-unlock-confirm" class="brx-btn brx-btn-primary" onclick="brxEnglish.confirmUnlock()">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- Badge Modal -->
+<div id="brx-badge-modal" class="brx-modal hidden">
+  <div class="brx-modal-card brx-badge-modal-card">
+    <div id="brx-badge-visual" class="brx-badge-visual"></div>
+    <h3 id="brx-badge-title">Badge Earned</h3>
+    <p id="brx-badge-body"></p>
+    <div class="brx-modal-actions">
+      <button class="brx-btn brx-btn-primary" onclick="brxEnglish.hideBadge()">Nice!</button>
+    </div>
+  </div>
+</div>
+<!-- Fullscreen Tip Modal (append near other modals, before </body>) -->
+<div id="fullscreenTip" class="modal hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="fsTipTitle">
+  <div class="modal-content card" style="max-width:440px; width:calc(100% - 30px); position:relative; padding:18px;">
+    <button class="modal-close" id="closeFullscreenTip" aria-label="Close">✕</button>
+
+    <h3 id="fsTipTitle">Best experience: use Fullscreen</h3>
+    <p class="muted" style="margin-top:8px">
+      For distraction-free learning and larger controls, open this app in <strong>fullscreen</strong>.
+      We'll remind you every 5 minutes until you switch.
+    </p>
+
+    <div style="display:flex; gap:8px; margin-top:14px; justify-content:flex-end;">
+      <button id="goFullscreenBtn" class="btn btn-primary">Go Fullscreen</button>
+      <button id="dismissFullscreenBtn" class="btn btn-ghost">Close</button>
+    </div>
+  </div>
+</div>
+
+
+
+</body>
+</html> 

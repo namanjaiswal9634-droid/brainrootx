@@ -1,0 +1,3063 @@
+/* ========= Speak Roots — FULL updated style10.css =========
+   - Complete replacement file
+   - Fixed header (pinned and small), content padding sync using --appbar-height
+   - Grid: 2 columns on phones (1 column only for very narrow)
+   - Modern Words layout fixed (buttons beneath text, spacing)
+   - Mini Games breathing + responsive controls
+   - Full UI styles: cards, forms, lists, dark theme, profile, streak modal, etc.
+*/
+
+/* --------- Variables --------- */
+:root{
+  --bg: #ffffff;
+  --text: #111318;
+  --muted: #616b75;
+  --primary: #1a73e8;
+  --red: #ea4335;
+  --yellow: #fbbc05;
+  --green: #34a853;
+  --card: #ffffff;
+  --shadow: 0 10px 20px rgba(16,24,40,0.06);
+  --radius: 14px;
+  --max-width: 1100px;
+  --app-pad: 14px;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  /* default header height - will be kept in sync with JS */
+  --appbar-height: 68px;
+}
+
+/* --------- Base / Reset --------- */
+* { box-sizing: border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing: grayscale; }
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:16px;line-height:1.32}
+img,video,picture{max-width:100%;height:auto;display:block}
+a{color:var(--primary);text-decoration:none}
+button{font-family:inherit;font-size:inherit}
+
+/* --------- App container (space for header via --appbar-height) --------- */
+.app{
+  max-width: var(--max-width);
+  margin:0 auto;
+  padding: var(--app-pad);
+  padding-top: calc(var(--appbar-height) + var(--app-pad));
+  padding-bottom: 120px; /* leave room for footer/native nav */
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+
+/* --------- Appbar (header) — FIXED, no transform tricks ---------
+   Important: avoid transforms on the fixed element so it remains fixed across devices.
+*/
+.appbar{
+  position: fixed;
+  top: env(safe-area-inset-top, 0);
+  left: 0;
+  right: 0;
+  z-index: 2200;
+  background: var(--bg);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px var(--app-pad);
+  gap: 12px;
+  /* no transform on .appbar */
+}
+
+/* center content visually with same max width as .app */
+.appbar > .brand,
+.appbar > .appbar-actions { max-width: calc(var(--max-width) - (var(--app-pad) * 2)); }
+
+/* brand + title */
+.brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.logo-dot{ width:9px;height:9px;border-radius:50%;display:inline-block; }
+.logo-blue{ background: var(--primary); }
+.logo-red{ background: var(--red); }
+.logo-yellow{ background: var(--yellow); }
+.logo-green{ background: var(--green); }
+
+.brand h1{
+  margin:0;
+  font-weight:800;
+  font-size: clamp(16px, 3.8vw, 20px);
+  line-height:1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  letter-spacing: .2px;
+}
+.accent{ color: var(--primary); }
+
+/* actions area on the right */
+.appbar-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  justify-content:flex-end;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* chips (buttons) */
+.chip{
+  border: none;
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor:pointer;
+  background: var(--primary);
+  color: #fff;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:36px;
+  min-width: 76px;
+  font-size:14px;
+  box-shadow: 0 6px 16px rgba(26,115,232,0.08);
+  transition: transform .12s ease, box-shadow .12s ease;
+  white-space:nowrap;
+}
+.chip:active{ transform: translateY(1px); }
+.chip:focus{ outline: 3px solid rgba(26,115,232,0.12); outline-offset:2px; }
+
+/* outline variant */
+.chip-outline{
+  background: #fff;
+  color: var(--primary);
+  border: 1.8px solid var(--primary);
+  font-weight:700;
+  box-shadow:none;
+}
+
+/* --------- Screens / cards / general UI --------- */
+.screen{ display:none; animation:fadeIn .18s ease both; }
+.screen.active{ display:block; }
+@keyframes fadeIn { from{ opacity: 0.75; transform: translateY(6px) } to{ opacity: 1; transform:none } }
+
+.card{
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  margin: 14px 0;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+@media (hover:hover){
+  .card:hover{ transform: translateY(-6px); box-shadow: 0 14px 28px rgba(16,24,40,0.08); }
+}
+@media (max-width: 520px){
+  .card{ transform: none !important; }
+  .card:hover{ transform: none; box-shadow: var(--shadow); }
+}
+
+/* headings */
+h1,h2,h3,h4{ margin:0; font-weight:800; color:var(--text) }
+h1{ font-size: clamp(22px, 6.5vw, 36px) }
+h2{ font-size: clamp(18px, 4.5vw, 24px) }
+h3{ font-size: 16px }
+
+/* muted text helpers */
+.muted{ color: var(--muted); font-size: .98rem }
+.tiny{ font-size:12px; color: var(--muted) }
+
+/* tabs */
+.tabs{ display:flex; gap:8px; margin: 12px 0 }
+.tab{
+  flex:1;
+  border: none;
+  background: #f3f7ff;
+  color: #254;
+  padding: 10px;
+  border-radius: 12px;
+  cursor:pointer;
+  font-weight:700;
+  transition: all .12s ease;
+}
+.tab.active{ background: var(--primary); color: #fff }
+
+/* forms */
+.form .row{ display:flex; flex-direction:column; gap:6px; margin:10px 0 }
+.form label{ font-weight:600; font-size: 15px }
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="tel"],
+.form input[type="password"],
+.form select,
+input, select, textarea {
+  width:100%;
+  padding:10px 12px;
+  border-radius: 12px;
+  border: 1.8px solid #e6e6e6;
+  font-size: 15px;
+  outline:none;
+  background: #fff;
+  transition: border-color .12s ease, box-shadow .12s ease;
+}
+input:focus, select:focus, textarea:focus{ border-color: var(--primary); box-shadow: 0 6px 20px rgba(26,115,232,0.06); }
+
+/* buttons */
+.btn{
+  border:none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor:pointer;
+  font-weight:800;
+  font-size: 15px;
+  min-height:44px;
+}
+.btn-primary{ background: var(--primary); color:#fff; box-shadow: var(--shadow) }
+.btn-ghost{ background:#f5f7fb; color: #222; box-shadow:none }
+
+/* inline row helper */
+.row-inline{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.row-inline input{ flex:1; min-width: 140px }
+
+/* toolbar */
+.toolbar{ display:flex; align-items:center; gap:10px; margin-top:8px; margin-bottom:8px }
+.menu-btn{ background:#fff; border: 2px solid #eee; border-radius: 12px; padding:8px 12px; cursor:pointer; font-weight:700; }
+.menu-btn:hover{ border-color:#ddd }
+
+/* --------- Grid of module cards (2 per row on phones) --------- */
+/* keep 2 columns on phones as requested; 1 column only for very narrow devices */
+.grid{
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* default 2 cols on phones */
+}
+@media (min-width: 720px){ .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1024px){ .grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 360px){
+  /* single column only on ultra small phones */
+  .grid{ grid-template-columns: 1fr; gap:12px; }
+}
+
+/* nav cards inside grid */
+.nav{
+  text-align:left;
+  cursor:pointer;
+  border: 0;
+  padding: 12px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+  min-height: 110px;
+  width:100%;
+  align-self: stretch;
+}
+.nav .icon{ width:48px; height:48px; border-radius:14px; margin-bottom:6px; box-shadow: var(--shadow); transition: transform .12s ease; flex-shrink:0; }
+.nav:hover .icon{ transform: scale(1.06) }
+.nav h3{ margin:0; font-size:16px }
+.nav p{ margin:0; color:var(--muted); font-size:14px }
+
+/* specific styling for game nav cards (more breathing) */
+.nav.game-card{
+  padding: 18px;
+  min-height: 130px;
+  justify-content:center;
+}
+
+/* --------- lists & Modern Words improvements --------- */
+/* .list used in many places - keep it as a vertical stack */
+.list{ display:grid; gap:10px }
+
+/* Important change:
+   Each .list .item is BLOCK so content stacks vertically.
+   This prevents action buttons from being forced to the right side.
+*/
+.list .item{
+  padding:12px;
+  border:1px solid #eee;
+  border-radius:12px;
+  display:block;            /* was flexible row - causes squeeze; change to block */
+  background: var(--card);
+  line-height:1.35;
+}
+
+/* Modern Words: the page injects a nested DIV for actions (no class), so target .item > div */
+.list .item > div{
+  margin-top:8px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+/* make the modern word action buttons comfortable */
+.list .item .btn{
+  min-width: 110px;
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+/* translation area under each modern item */
+.list .item .translation{
+  margin-top:6px;
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* --------- Mini Games: controls & area spacing --------- */
+.game-controls{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.game-controls .btn{ flex: 1 1 auto; min-width: 120px }
+
+/* game area and boards */
+.game-area{ margin-top:14px; }
+.game-board{ padding:12px; border-radius:10px; background: #fff; box-shadow: var(--shadow); }
+.game-board .game-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.pair-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:10px; }
+@media (max-width: 520px){ .pair-grid{ grid-template-columns: 1fr; } }
+
+/* word-card & def-card inside Word Match */
+.word-card, .def-card{
+  padding:10px; border-radius:10px; border:1px solid #eee; text-align:center; cursor:pointer;
+}
+.word-card.selected, .def-card.selected{ outline: 3px solid rgba(26,115,232,0.08); }
+.word-card.matched, .def-card.matched{ background:#eef7f1; border-color:var(--green); color:var(--text); }
+
+/* --------- ABC grid & misc grids --------- */
+.abc-grid{ display:grid; gap:10px; grid-template-columns: repeat(2, 1fr) }
+@media (min-width: 600px){ .abc-grid{ grid-template-columns: repeat(4, 1fr) } }
+@media (min-width: 900px){ .abc-grid{ grid-template-columns: repeat(6, 1fr) } }
+.abc-card{ display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px; border:1px solid #eee; border-radius:12px; }
+
+/* quiz states */
+.quiz .q{ padding:14px; border:1px solid #eee; border-radius:12px; margin:10px 0 }
+.quiz .choice{ display:block; width:100%; text-align:left; margin:6px 0; padding:10px; border-radius:10px; border:1px solid #e6e6e6; background:#fff; cursor:pointer }
+.quiz .choice.correct{ border-color: var(--green); background: #eef7f1 }
+.quiz .choice.wrong{ border-color: var(--red); background: #fdecea }
+
+/* tables */
+.tables-wrap{ display:grid; gap:10px; grid-template-columns: repeat(2, minmax(0,1fr)) }
+@media (min-width:720px){ .tables-wrap{ grid-template-columns: repeat(4, 1fr) } }
+.table-card{ border:1px solid #eee; border-radius:12px; padding:12px }
+
+/* leader */
+.leader .row{ display:flex; align-items:center; justify-content:space-between; padding:10px; border-bottom:1px solid #f0f0f0 }
+.leader .row.top{ background: #fff9e6 }
+
+/* --------- Streak modal (claim your streak) --------- */
+.streak-modal{ position: fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.35); z-index: 2600 }
+.streak-modal.hidden{ display:none }
+.streak-card{ background:#fff; padding:20px; border-radius:14px; width:360px; max-width:92%; text-align:center; box-shadow: 0 14px 40px rgba(0,0,0,0.18); animation:popIn .42s cubic-bezier(.2,.9,0,1) }
+@keyframes popIn{ 0%{ transform: scale(.85); opacity:0 } 50%{ transform: scale(1.03) } 100%{ transform: scale(1); opacity:1 } }
+
+/* --------- Footer (static at page end) --------- */
+.footer{
+  position: relative;
+  background: transparent;
+  border-top: 1px solid rgba(0,0,0,0.04);
+  padding: 14px;
+  text-align:center;
+  color: var(--muted);
+  margin-top: 20px;
+  font-size: 14px;
+}
+.footer a{ color: var(--primary); font-weight:600 }
+
+/* --------- Profile layout tweaks --------- */
+.profile-card .profile-header{ display:flex; gap:14px; align-items:center; margin-bottom: 10px; }
+.profile-card .avatar{ width:72px; height:72px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:22px; color:#fff; background: linear-gradient(135deg,#90caf9,#42a5f5); flex: 0 0 72px; box-shadow: var(--shadow); }
+.profile-card .profile-ids h3{ margin:0; font-size:20px; }
+.profile-card .profile-ids .muted{ margin-top:6px; }
+.profile-card .profile-stats{ display:flex; gap:12px; margin: 12px 0; align-items:stretch; justify-content:space-between; flex-wrap:wrap; }
+.profile-card .profile-stats .stat{ flex:1; text-align:center; padding:10px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+.profile-card .profile-stats .stat-num{ font-size:18px; font-weight:800; color:var(--text) }
+.profile-card .profile-stats .stat-lbl{ font-size:12px; color:var(--muted); margin-top:4px }
+
+/* soft hr */
+hr.soft{ border:none; border-top:1px solid rgba(0,0,0,0.06); margin:14px 0 }
+
+/* --------- utilities --------- */
+.hidden{ display:none !important }
+.center{ text-align:center }
+.small{ font-size:13px }
+
+/* keyboard focus */
+button:focus, a:focus, input:focus, select:focus { outline-offset: 2px; }
+
+/* --------- Mobile tweaks (header behaviour & chips) --------- */
+@media (max-width: 480px){
+  :root { --app-pad: 12px; }
+  .app{ padding: var(--app-pad); padding-bottom:110px; padding-top: calc(var(--appbar-height) + var(--app-pad)); }
+  .appbar{ padding: 8px var(--app-pad); gap:8px; flex-wrap:wrap; align-items:flex-start; }
+  .brand{ flex: 1 1 100%; min-width:0; gap:8px; }
+  .brand h1{ font-size: clamp(15px, 5.5vw, 20px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .logo-dot:nth-child(n+3){ display:none; }
+
+  /* allow chips to wrap gracefully below brand */
+  .appbar-actions{
+    width:100%;
+    justify-content:flex-start;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:6px;
+  }
+  .appbar-actions .chip{
+    flex: 0 1 auto;
+    min-width: 100px;
+    padding: 7px 10px;
+    font-size:14px;
+  }
+
+  /* modern list items and game controls spacing improvements */
+  .list .item{ padding:12px; }
+  .game-controls .btn{ min-width: 90px; }
+}
+@media (max-width: 360px){
+  .brand h1{ font-size:14px }
+  .appbar-actions .chip{ min-width: 86px; font-size:13px; padding:7px 8px }
+  .logo-dot{ width:8px; height:8px; }
+}
+
+/* --------- Dark theme --------- */
+:root[data-theme="dark"]{
+  --bg: #071226;
+  --text: #e6eef6;
+  --muted: #9fb0c1;
+  --primary: #3ea6ff;
+  --red: #ff6b6b;
+  --yellow: #f0c419;
+  --green: #39d98a;
+  --card: #071a28;
+  --shadow: 0 10px 30px rgba(0,0,0,0.55);
+  --radius: 14px;
+}
+:root[data-theme="dark"] .chip.chip-outline{ background: transparent; color: var(--text); border-color: rgba(255,255,255,0.12); }
+:root[data-theme="dark"] .menu-btn{ background: rgba(255,255,255,0.02); color: var(--text); border-color: rgba(255,255,255,0.06); }
+:root[data-theme="dark"] hr.soft{ border-top-color: rgba(255,255,255,0.04); }
+:root[data-theme="dark"] .footer{ border-top-color: rgba(255,255,255,0.04); color: var(--muted); }
+
+/* theme transitions */
+html, body, .app, .card, .streak-card, .streak-modal { transition: background-color .22s ease, color .22s ease, box-shadow .22s ease, border-color .22s ease; }
+/* ---------- Social sign-in buttons ---------- */
+.btn.social{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding-left:12px;
+  padding-right:12px;
+  min-height:44px;
+}
+.btn.social::before{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:28px;
+  border-radius:6px;
+  font-weight:800;
+  font-size:14px;
+}
+.btn.social.google::before{ content:'G'; background:#fff; color:#db4437; border:1px solid rgba(0,0,0,0.06); }
+.btn.social.facebook::before{ content:'f'; background:#1877f2; color:#fff; }
+
+/* ---------- Modal (login popup) ---------- */
+.modal{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(2,6,23,0.48);
+  padding: 18px;
+  z-index: 2500;
+}
+.modal.hidden{ display:none; }
+.modal .modal-content{ max-width:520px; width:100%; padding:16px; position:relative; }
+.modal .modal-close{
+  position:absolute;
+  right:12px;
+  top:10px;
+  border:none;
+  background:transparent;
+  font-size:18px;
+  cursor:pointer;
+}
+/* ==== CATEGORY CARD ICON STYLES ==== */
+.card .icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: normal;
+  margin-bottom: 10px;
+  color: #fff; /* emoji visible */
+}
+/* ==== ICON BOX BASE ==== */
+.card .icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+/* ==== Individual icons + colors ==== */
+.i-dictionary {
+  background: #42a5f5;
+}
+.i-dictionary::before {
+  content: "📖";
+}
+
+.i-book {
+  background: #ab47bc;
+}
+.i-book::before {
+  content: "🗣️";
+}
+
+.i-abc {
+  background: #66bb6a;
+}
+.i-abc::before {
+  content: "🔤";
+}
+
+.i-math {
+  background: #ff7043;
+}
+.i-math::before {
+  content: "🔢";
+}
+
+.i-quiz {
+  background: #fdd835;
+  color: #000; /* better contrast on yellow */
+}
+.i-quiz::before {
+  content: "❓";
+}
+
+.i-table {
+  background: #26c6da;
+}
+.i-table::before {
+  content: "➗";
+}
+
+.i-globe {
+  background: #ec407a;
+}
+.i-globe::before {
+  content: "🌍";
+}
+
+.i-trophy {
+  background: #78909c;
+}
+.i-trophy::before {
+  content: "🏆";
+}
+
+.i-mic {
+  background: #5c6bc0;
+}
+.i-mic::before {
+  content: "🎤";
+}
+
+.i-spark {
+  background: #ffca28;
+  color: #000;
+}
+.i-spark::before {
+  content: "✨";
+}
+
+.i-game {
+  background: #8d6e63;
+}
+.i-game::before {
+  content: "🎮";
+}
+
+.i-profile {
+  background: #26a69a;
+}
+.i-profile::before {
+  content: "👤";
+}
+
+.i-chat {
+  background: #29b6f6;
+}
+.i-chat::before {
+  content: "💬";
+}
+
+.i-locked {
+  background: #cfd8dc;
+  color: #555;
+}
+.i-locked::before {
+  content: "🔒";
+}
+/* === MAIN MENU: Two cards per row fix === */
+#menu .grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 20px !important;
+}
+
+#menu .grid .card.nav {
+  width: auto !important;       /* stop stretching full width */
+  max-width: 100% !important;   /* don’t overflow */
+  justify-self: stretch;        /* make it fill its grid cell */
+}
+/* Old rule somewhere above */
+.logo::after {
+  content: "Speak Roots";
+}
+
+/* Appended rule at the bottom overrides it */
+.logo::after {
+  content: "BrainRootX";  /* will override the old one */
+}
+/* ===== BRX English Module Styles (prefix brx-) ===== */
+.brx-card.brx-el-card {
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:14px;
+  border-radius:12px;
+  background: linear-gradient(180deg, #fff, #fff);
+  box-shadow: 0 6px 18px rgba(20,30,50,0.06);
+  cursor:pointer;
+}
+.brx-card-icon { font-size:30px; width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:10px; background:#f0f8ff; }
+.brx-card-body h3 { margin:0; font-size:16px; color:#122; }
+.brx-card-body p { margin:2px 0 0; font-size:13px; color:#666; }
+
+/* Panels */
+.brx-panel { padding:14px; background:transparent; }
+.brx-panel-header { display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.brx-back { border:none; background:#fff; padding:8px 12px; border-radius:8px; box-shadow:0 3px 8px rgba(0,0,0,0.06); cursor:pointer; }
+.brx-xp-wrap { text-align:right; min-width:160px; }
+#brx-xp-display { font-weight:700; color:#0a6; }
+.brx-small-muted { font-size:12px; color:#777; }
+
+/* Levels grid */
+.brx-levels-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:12px; }
+.brx-level-card { padding:12px; border-radius:12px; background:#fff; box-shadow:0 6px 16px rgba(15,25,45,0.05); transition:transform .14s; display:flex; flex-direction:column; gap:8px; min-height:92px; }
+.brx-level-card:hover { transform:translateY(-4px); }
+.brx-level-card.unlocked { border: 1px solid rgba(10,160,120,0.06); }
+.brx-level-head { display:flex; align-items:center; justify-content:space-between; }
+.brx-level-num { font-weight:700; color:#123; }
+.brx-level-small-badge { display:flex; gap:6px; align-items:center; font-size:12px; }
+.brx-badge-dot { width:12px; height:12px; border-radius:50%; display:inline-block; box-shadow:0 2px 6px rgba(0,0,0,0.12); }
+.brx-badge-code { font-weight:700; margin-left:6px; color:#333; }
+
+/* descriptions & actions */
+.brx-level-desc { color:#555; font-size:13px; }
+.brx-level-desc.locked-desc { color:#9aa; }
+.brx-level-actions { margin-top:6px; display:flex; gap:8px; }
+.brx-btn { padding:8px 10px; border-radius:8px; border:1px solid #e6e6e6; background:#fff; cursor:pointer; font-weight:600; box-shadow:none; }
+.brx-btn[disabled] { opacity:0.45; cursor:not-allowed; }
+.brx-btn-primary { background:#0066ff; color:#fff; border-color:transparent; }
+
+/* badge strip */
+.brx-badge-strip { display:flex; gap:10px; align-items:center; padding:8px 0 12px 0; }
+.brx-badge-strip-item { display:flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; background:rgba(0,0,0,0.03); font-size:13px; color:#333; }
+.brx-badge-strip-item.earned { background:linear-gradient(90deg, rgba(0,0,0,0.03), rgba(255,255,255,0.0)); box-shadow:0 4px 12px rgba(0,0,0,0.04); }
+
+/* Test page */
+.brx-test-questions { display:flex; flex-direction:column; gap:12px; margin:6px 0 18px; }
+.brx-qcard { display:flex; gap:12px; padding:12px; border-radius:10px; background:#fff; box-shadow:0 6px 14px rgba(0,0,0,0.04); }
+.brx-qnum { font-weight:700; color:#333; width:30px; }
+.brx-qtext { color:#222; margin-bottom:8px; }
+.brx-qopts { display:flex; flex-direction:column; gap:6px; }
+.brx-opt { display:flex; gap:8px; align-items:center; border-radius:8px; padding:8px; background:#fbfbfb; cursor:pointer; }
+.brx-opt input { margin-right:8px; }
+
+/* Test actions */
+.brx-test-actions { display:flex; gap:12px; align-items:center; justify-content:space-between; }
+
+/* Modals */
+.brx-modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(8,12,20,0.45); z-index:9999; }
+.brx-modal.hidden { display:none; }
+.brx-modal-card { width:92%; max-width:420px; background:#fff; padding:18px; border-radius:12px; text-align:center; box-shadow:0 18px 60px rgba(10,20,30,0.35); }
+.brx-modal-actions { display:flex; gap:10px; justify-content:center; margin-top:14px; }
+
+/* big badge */
+.brx-big-badge { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.brx-big-badge-core { width:98px; height:98px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:36px; font-weight:800; box-shadow: 0 8px 20px rgba(0,0,0,0.18); }
+.brx-big-badge-label { font-weight:700; color:#222; }
+
+/* small utilities */
+.hidden { display:none !important; }
+
+/* responsive tweaks */
+@media (max-width:520px) {
+  .brx-levels-grid { grid-template-columns:repeat(2,1fr); }
+  .brx-card.brx-el-card { padding:12px; }
+}
+/* Improved badge emblem */
+.brx-big-badge-core {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  font-weight: 900;
+  color: #fff;
+  position: relative;
+  text-shadow: 0 3px 8px rgba(0,0,0,0.35);
+  animation: popIn 0.6s ease forwards, glowPulse 2s infinite;
+}
+
+/* Ribbon under medal */
+.brx-big-badge-core::after {
+  content: "";
+  position: absolute;
+  bottom: -25px;
+  width: 60%;
+  height: 25px;
+  background: linear-gradient(180deg, #ff5555, #aa0000);
+  clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
+}
+
+/* Gradient backgrounds per rank */
+.brx-badge-A { background: linear-gradient(145deg, #ffce00, #e0a000); } /* Gold */
+.brx-badge-B { background: linear-gradient(145deg, #8e44ad, #5e3377); } /* Purple */
+.brx-badge-C { background: linear-gradient(145deg, #3498db, #216f9c); } /* Blue */
+.brx-badge-D { background: linear-gradient(145deg, #f39c12, #c87f0a); } /* Orange */
+.brx-badge-E { background: linear-gradient(145deg, #27ae60, #1b7f44); } /* Green */
+/* ===== Improved Badge Strip ===== */
+.brx-badge-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 14px 0 24px;
+  justify-content: center;
+}
+
+.brx-badge-strip-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  background: #f5f6fa;
+  color: #555;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brx-badge-strip-item.earned {
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.brx-badge-strip-item strong {
+  font-weight: 700;
+  margin-right: 2px;
+}
+
+.brx-badge-strip-item small {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* Mini Medal Core */
+.brx-mini-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  box-shadow: inset 0 2px 5px rgba(255,255,255,0.4),
+              0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Each Badge Color Theme */
+.brx-badge-E { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+.brx-badge-D { background: linear-gradient(135deg, #f39c12, #d35400); }
+.brx-badge-C { background: linear-gradient(135deg, #3498db, #2980b9); }
+.brx-badge-B { background: linear-gradient(135deg, #8e44ad, #663399); }
+.brx-badge-A { background: linear-gradient(135deg, #f1c40f, #f39c12); }
+
+/* Faded dot when not earned */
+.brx-badge-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  opacity: 0.4;
+}
+
+/* Big Badge Modal (when unlocked) */
+.brx-big-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px auto;
+}
+
+.brx-big-badge-core {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 4px 12px rgba(255,255,255,0.4),
+              0 6px 12px rgba(0,0,0,0.3);
+  margin-bottom: 8px;
+}
+
+.brx-big-badge-label {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+/* ===== Cartoonised English Learning Roadmap ===== */
+
+/* Cartoon badges (header) */
+.brx-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  border-radius:20px;
+  font-size:15px;
+  font-weight:700;
+  color:#fff;
+  line-height:1.2;
+  box-shadow:0 4px 10px rgba(0,0,0,0.15);
+  transform:rotate(-1deg);
+  transition:transform .2s ease;
+}
+.brx-badge:hover{ transform:rotate(1deg) scale(1.05); }
+
+/* Emoji icons per rank */
+.brx-badge[data-rank="E"]::before{ content:"🌱"; }
+.brx-badge[data-rank="D"]::before{ content:"🥉"; }
+.brx-badge[data-rank="C"]::before{ content:"🥈"; }
+.brx-badge[data-rank="B"]::before{ content:"🥇"; }
+.brx-badge[data-rank="A"]::before{ content:"🏆"; }
+
+/* Colors per rank */
+.brx-badge[data-rank="E"]{ background:linear-gradient(135deg,#34d399,#6ee7b7); }
+.brx-badge[data-rank="D"]{ background:linear-gradient(135deg,#f59e0b,#fcd34d); }
+.brx-badge[data-rank="C"]{ background:linear-gradient(135deg,#3b82f6,#93c5fd); }
+.brx-badge[data-rank="B"]{ background:linear-gradient(135deg,#a855f7,#c084fc); }
+.brx-badge[data-rank="A"]{ background:linear-gradient(135deg,#facc15,#fde047); color:#222; }
+
+/* ===== Cartoon roadmap layout ===== */
+.brx-levels-grid{
+  display:flex;
+  gap:30px;
+  padding:40px 20px;
+  position:relative;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.brx-levels-grid::-webkit-scrollbar{ display:none; }
+
+/* Fun dashed path */
+.brx-levels-grid::before{
+  content:"";
+  position:absolute;
+  top:80px;
+  left:0;
+  right:0;
+  height:6px;
+  background:repeating-linear-gradient(
+    90deg,
+    #fcd34d 0 16px,
+    transparent 16px 32px
+  );
+  border-radius:6px;
+  z-index:1;
+}
+
+/* Cartoon level bubbles */
+.brx-level-card{
+  position:relative;
+  min-width:160px;
+  padding:16px;
+  border-radius:24px;
+  background:#fffdf0;
+  border:4px solid #fcd34d;
+  text-align:center;
+  z-index:2;
+  box-shadow:0 6px 14px rgba(0,0,0,0.1);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.brx-level-card:hover{
+  transform:translateY(-6px) rotate(-1deg);
+  box-shadow:0 10px 20px rgba(0,0,0,0.18);
+}
+
+/* Emoji node marker */
+.brx-level-card::before{
+  content:"🎯";
+  font-size:22px;
+  position:absolute;
+  top:-22px;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+/* Different emojis depending on status */
+.brx-level-card.unlocked::before{ content:"✅"; }
+.brx-level-card.next::before{ content:"🔓"; }
+.brx-level-card.locked::before{ content:"🔒"; }
+
+/* Mobile cartoon vertical path */
+@media(max-width:860px){
+  .brx-levels-grid{
+    flex-direction:column;
+    gap:28px;
+    padding-left:50px;
+  }
+  .brx-levels-grid::before{
+    left:30px;
+    top:0;
+    bottom:0;
+    width:6px;
+    height:auto;
+    background:repeating-linear-gradient(
+      180deg,
+      #fcd34d 0 16px,
+      transparent 16px 32px
+    );
+  }
+  .brx-level-card{
+    min-width:auto;
+    border-radius:20px;
+  }
+  .brx-level-card::before{
+    left:-36px;
+    top:16px;
+    transform:none;
+  }
+}
+/* ===== BRX — Full updated badges + mini badges + locked + confetti + toasts ===== */
+
+/* Badge strip layout */
+#brx-badge-strip { display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:12px 0; }
+.brx-badge-strip-item { display:flex; align-items:center; }
+
+/* Earned medal */
+.brx-medal {
+  display:flex; align-items:center; gap:12px;
+  padding:8px 14px; border-radius:14px;
+  transition: transform .22s cubic-bezier(.2,.9,.3,1), box-shadow .22s ease;
+  transform-origin:center;
+  cursor:default; position:relative;
+}
+.brx-medal:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 22px 48px rgba(8,20,50,0.12); }
+
+/* medal core holds code & emoji */
+.brx-medal .medal-core {
+  width:64px; height:64px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  position:relative; color:#fff;
+  box-shadow: inset 0 -6px 12px rgba(0,0,0,0.22), 0 10px 28px rgba(0,0,0,0.12);
+  border: 3px solid rgba(255,255,255,0.8);
+}
+.brx-medal .shine {
+  position:absolute; inset:0; border-radius:50%;
+  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.6), transparent 55%);
+  pointer-events:none;
+}
+.brx-medal .medal-code {
+  position:absolute; top:8px; left:8px; font-weight:800; font-size:12px;
+  background: rgba(255,255,255,0.18); padding:2px 6px; border-radius:8px;
+  backdrop-filter: blur(4px);
+}
+.brx-medal .medal-emoji { font-size:30px; z-index:2; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12)); }
+
+/* ribbons under medal */
+.brx-medal .ribbon { position:absolute; bottom:-22px; width:14px; height:30px; border-radius:3px; box-shadow:0 8px 18px rgba(0,0,0,0.12); }
+.brx-medal .ribbon.left { left:16px; transform: rotate(-18deg); }
+.brx-medal .ribbon.right { right:16px; transform: rotate(18deg); }
+
+.brx-badge-meta { display:flex; flex-direction:column; line-height:1; margin-left:6px; }
+.brx-badge-meta strong { font-size:14px; letter-spacing:0.3px; }
+.brx-badge-meta small { font-size:11px; opacity:.86; margin-top:3px; }
+
+/* pop animation when newly earned */
+.brx-medal.just-earned { animation: medalPop .9s cubic-bezier(.2,.75,.25,1); box-shadow: 0 28px 68px rgba(0,0,0,0.18); }
+@keyframes medalPop {
+  0% { transform: scale(.5) translateY(10px); opacity:0; filter: blur(6px); }
+  45% { transform: scale(1.18) translateY(-8px); opacity:1; }
+  75% { transform: scale(.96) translateY(-3px); }
+  100% { transform: scale(1) translateY(0); filter:none; }
+}
+
+/* Locked medal (explicit lock) */
+.brx-medal-locked {
+  display:flex; align-items:center; gap:12px;
+  padding:8px 14px; border-radius:14px;
+  background: rgba(8,20,50,0.03);
+  color: rgba(8,20,50,0.75);
+  border: 1px dashed rgba(8,20,50,0.06);
+}
+.brx-medal-locked .medal-core {
+  width:64px; height:64px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg,#eaeaea,#d2d2d2); color:#444; font-size:26px;
+  box-shadow: inset 0 -6px 10px rgba(0,0,0,0.12);
+  border: 2px solid rgba(0,0,0,0.05);
+}
+.brx-medal-locked .lock { font-size:28px; }
+
+/* Rank-specific colors (medal core & ribbons) */
+.brx-medal-E .medal-core { background: linear-gradient(135deg,#34d399,#6ee7b7); color:#053f2d; }
+.brx-medal-E .ribbon { background: linear-gradient(180deg,#28a745,#6ee7b7); }
+
+.brx-medal-D .medal-core { background: linear-gradient(135deg,#f59e0b,#fcd34d); color:#5a3a00; }
+.brx-medal-D .ribbon { background: linear-gradient(180deg,#f59e0b,#fcd34d); }
+
+.brx-medal-C .medal-core { background: linear-gradient(135deg,#3b82f6,#93c5fd); color:#05204a; }
+.brx-medal-C .ribbon { background: linear-gradient(180deg,#3b82f6,#93c5fd); }
+
+.brx-medal-B .medal-core { background: linear-gradient(135deg,#a855f7,#c084fc); color:#2b0f3d; }
+.brx-medal-B .ribbon { background: linear-gradient(180deg,#a855f7,#c084fc); }
+
+.brx-medal-A .medal-core { background: linear-gradient(135deg,#facc15,#fde047); color:#3b2b00; }
+.brx-medal-A .ribbon { background: linear-gradient(180deg,#facc15,#fde047); }
+
+/* Mini medal inside level card */
+.brx-level-small-badge { display:inline-block; margin-left:12px; }
+.brx-mini-badge {
+  display:flex; align-items:center; justify-content:center;
+  width:36px; height:36px; border-radius:50%;
+  font-size:18px; box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+  border: 2px solid rgba(255,255,255,0.85);
+  position:relative; overflow:visible;
+}
+.brx-mini-badge .mini-medal { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow: inset 0 -4px 8px rgba(0,0,0,0.06); border:2px solid rgba(255,255,255,0.9); }
+.brx-mini-badge .mini-emoji { transform: translateY(1px); }
+
+/* mini ribbons */
+.brx-mini-badge .mini-ribbon { position:absolute; width:8px; height:10px; top:18px; background:rgba(0,0,0,0.06); border-radius:2px; }
+.brx-mini-badge .mini-ribbon.left { left:-6px; transform: rotate(-18deg); }
+.brx-mini-badge .mini-ribbon.right { right:-6px; transform: rotate(18deg); }
+
+/* mini per-rank colors (data-rank or parent class) */
+.brx-mini-badge[data-rank="E"], .brx-badge-E .brx-mini-badge { background: linear-gradient(135deg,#34d399,#6ee7b7); color:#083f28; }
+.brx-mini-badge[data-rank="D"], .brx-badge-D .brx-mini-badge { background: linear-gradient(135deg,#f59e0b,#fcd34d); color:#5a3a00; }
+.brx-mini-badge[data-rank="C"], .brx-badge-C .brx-mini-badge { background: linear-gradient(135deg,#3b82f6,#93c5fd); color:#05204a; }
+.brx-mini-badge[data-rank="B"], .brx-badge-B .brx-mini-badge { background: linear-gradient(135deg,#a855f7,#c084fc); color:#2b0f3d; }
+.brx-mini-badge[data-rank="A"], .brx-badge-A .brx-mini-badge { background: linear-gradient(135deg,#facc15,#fde047); color:#3b2b00; }
+
+/* Confetti */
+.brx-confetti-wrap { position:fixed; left:0; top:0; width:100%; height:0; pointer-events:none; z-index:9999; }
+.brx-confetti { position:absolute; top:6vh; width:10px; height:16px; opacity:0.95; transform-origin:center; border-radius:2px; animation: confFall 1.6s linear forwards; }
+.brx-confetti-wrap.explode .brx-confetti { animation-name: confFall, confSpin; animation-duration: 1.6s, 1.6s; }
+@keyframes confFall { 0% { transform: translateY(0) rotate(0deg) scale(1); opacity:1; } 100% { transform: translateY(90vh) rotate(360deg) scale(.9); opacity:0; } }
+@keyframes confSpin { 0% { transform: rotate(0) } 100% { transform: rotate(720deg) } }
+
+/* Toasts */
+#brx-toast-container { position: fixed; right: 18px; bottom: 18px; z-index: 12000; display:flex; flex-direction:column; gap:10px; }
+.brx-toast { min-width:220px; max-width:360px; padding:10px 12px; border-radius:10px; background:#fff; box-shadow: 0 14px 36px rgba(6,18,45,0.12); opacity:0; transform: translateY(6px); transition: all .28s cubic-bezier(.2,.9,.3,1); display:flex; align-items:center; justify-content:space-between; gap:8px; font-weight:600; }
+.brx-toast.visible { opacity:1; transform: translateY(0); }
+.brx-toast.info { border-left:4px solid #3b82f6; }
+.brx-toast.success { border-left:4px solid #10b981; }
+.brx-toast.warn { border-left:4px solid #f59e0b; }
+.brx-toast .brx-toast-close { background:none; border:none; font-size:14px; opacity:.7; cursor:pointer; }
+
+/* Test modal basics */
+.brx-test-modal { position: fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(10,14,30,0.45); z-index: 11000; padding:20px; }
+.brx-test-card { width: min(860px, 96%); max-height: 86vh; overflow:auto; background: linear-gradient(180deg,#fff,#fffef8); border-radius:12px; box-shadow: 0 30px 100px rgba(8,20,50,0.18); padding:18px; position:relative; }
+.brx-test-close { position:absolute; right:10px; top:10px; border:none; background:transparent; font-size:16px; cursor:pointer; }
+.brx-test-qs .brx-q { margin-bottom:12px; padding:10px; border-radius:8px; background: rgba(12,20,40,0.02); }
+.brx-q .q-text { font-weight:700; margin-bottom:8px; }
+.brx-q .q-opts label { display:block; padding:6px 8px; border-radius:6px; cursor:pointer; }
+.brx-q .q-opts input { margin-right:8px; }
+
+/* Buttons fallback */
+.brx-btn { padding:8px 12px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:#fff; cursor:pointer; }
+.brx-btn-primary { background: linear-gradient(135deg,#1d4ed8,#3b82f6); color:#fff; border:none; box-shadow: 0 8px 24px rgba(59,130,246,0.14); }
+
+/* Responsive tweaks */
+@media (max-width: 860px) {
+  .brx-medal .medal-core { width:52px; height:52px; }
+  .brx-medal { padding:6px 10px; gap:8px; border-radius:12px; }
+  .brx-medal-locked .medal-core { width:52px; height:52px; }
+  .brx-mini-badge { width:32px; height:32px; font-size:16px; }
+}
+/* ===== Fixes for English Learning UI (append only) ===== */
+
+/* 1. Remove unwanted space & align toolbar */
+#brx-english-levels .toolbar {
+  margin-top: 0;
+  padding-top: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+#brx-english-levels .toolbar h2 {
+  flex: 1 1 auto;
+  font-size: 18px;
+  margin: 0;
+}
+
+/* 2. XP + next level text responsive */
+#brx-english-levels .brx-xp-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 120px;
+  font-size: 14px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* Prevent clipping */
+#brx-next-cost {
+  white-space: normal;
+  font-size: 12px;
+  color: #777;
+}
+
+/* 3. Badge emoji overlay (not pushing grid down) */
+.brx-level-small-badge {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 2;
+}
+.brx-level-card {
+  position: relative;
+}
+
+/* 4. Levels grid responsive fix */
+#brx-levels-container,
+.brx-levels-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.brx-level-card {
+  flex: 1 1 140px;
+  max-width: 200px;
+  min-width: 120px;
+}
+
+/* On smaller phones: stack vertically */
+@media (max-width: 600px) {
+  #brx-levels-container,
+  .brx-levels-grid {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .brx-level-card {
+    max-width: 100%;
+  }
+}
+
+/* 5. Clean badge strip scrolling */
+#brx-badge-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 6px 0;
+}
+#brx-badge-strip::-webkit-scrollbar {
+  height: 6px;
+}
+#brx-badge-strip::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.3);
+  border-radius: 3px;
+}
+/* ===== Fix: align radio circles & option text in tests ===== */
+
+/* ensure option list stacks and each label fills the row */
+#brx-test-questions .q-opts,
+#brx-test-qs .q-opts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* make each option a flex row: radio + text */
+#brx-test-questions .q-opts label,
+#brx-test-qs .q-opts label {
+  display: flex;
+  align-items: center;      /* vertical center the radio with text */
+  gap: 12px;                /* space between radio and text */
+  width: 100%;              /* fill available width */
+  padding: 6px 8px;         /* comfortable tap area on mobile */
+  cursor: pointer;
+  user-select: none;
+  line-height: 1.35;
+}
+
+/* ensure the radio itself behaves like a normal inline control */
+#brx-test-questions .q-opts input[type="radio"],
+#brx-test-qs .q-opts input[type="radio"] {
+  margin: 0;
+  padding: 0;
+  flex: 0 0 auto;           /* don't stretch the radio */
+  width: 18px;
+  height: 18px;
+  align-self: center;
+  -webkit-appearance: radio;
+  appearance: radio;
+}
+
+/* make the option text take the remaining width and wrap naturally */
+#brx-test-questions .q-opts label > *:not(input),
+#brx-test-qs .q-opts label > *:not(input) {
+  flex: 1 1 auto;
+  display: inline-block;
+  word-break: break-word;
+}
+
+/* optional: slightly separate the question text above the options */
+#brx-test-questions .q-text,
+#brx-test-qs .q-text {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+/* ===== brx: small non-invasive fixes & test layout (append only) ===== */
+
+/* toolbar wrap + spacing (for small screens) */
+#brx-english-levels .toolbar { margin-top: 0; padding-top: 4px; flex-wrap: wrap; align-items:center; }
+#brx-english-levels .toolbar h2 { flex: 1 1 auto; font-size:18px; margin:0; }
+
+/* xp block responsive */
+#brx-english-levels .brx-xp-wrap { display:flex; flex-direction:column; align-items:flex-end; min-width:120px; font-size:14px; }
+#brx-next-cost { white-space:normal; font-size:12px; color:#666; }
+
+/* levels grid responsive */
+#brx-levels-container, .brx-levels-grid { display:flex; flex-wrap:wrap; gap:12px; justify-content:flex-start; }
+.brx-level-card { position:relative; flex: 1 1 140px; max-width:200px; min-width:120px; }
+
+/* mobile stack */
+@media (max-width:600px){
+  #brx-levels-container, .brx-levels-grid { flex-direction:column; align-items:stretch; }
+  .brx-level-card { max-width:100%; }
+  .progress-bar-outer { width:180px; }
+  .brx-xp-wrap { order:3; width:100%; text-align:left; margin-top:8px; }
+  .title-wrap { order:1; }
+  .menu-btn { order:0; }
+}
+
+/* badge strip scroll styling */
+#brx-badge-strip { display:flex; gap:10px; overflow-x:auto; padding:6px 0; }
+#brx-badge-strip::-webkit-scrollbar { height:6px; }
+#brx-badge-strip::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.28); border-radius:3px; }
+
+/* Test options layout: ensure radios are left & text wraps; each label is a row */
+#brx-test-questions .q-opts,
+#brx-test-questions .q-opts label {
+  display:flex;
+  flex-direction:column;
+}
+#brx-test-questions .q-opts label {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  padding:6px 8px;
+  cursor:pointer;
+  user-select:none;
+  line-height:1.35;
+  border-radius:6px;
+}
+#brx-test-questions .q-opts input[type="radio"] {
+  margin:0; padding:0; flex:0 0 auto; width:18px; height:18px; -webkit-appearance:radio; appearance:radio;
+}
+#brx-test-questions .q-opts label > span { flex:1 1 auto; display:inline-block; }
+
+/* question spacing */
+#brx-test-questions .q-text { margin-bottom:8px; font-weight:600; }
+
+/* ensure test panel is scrollable and has comfortable padding */
+#brx-english-test { overflow:auto; max-height: calc(100vh - 120px); padding-bottom:18px; }
+
+/* ensure .hidden still works */
+.hidden { display:none !important; }
+/* Question cards */
+.brx-q {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+.brx-q:hover { transform: translateY(-2px); }
+
+.q-text {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* Options as interactive buttons */
+.q-opts {
+  display: grid;
+  gap: 10px;
+}
+.q-opt {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.q-opt:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+.q-opt.selected {
+  border-color: #2563eb;
+  background: #dbeafe;
+}
+.q-opt.correct {
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+.q-opt.incorrect {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+/* Progress bar */
+#brx-test-meta {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #6b7280;
+}
+#brx-test-progressbar {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+#brx-test-progressbar span {
+  display: block;
+  height: 100%;
+  background: #3b82f6;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+/* ===== APPEND: Dictionary UI (results, meta, listening, responsive) ===== */
+
+#dictionary .dict-result {
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: var(--shadow);
+  margin-top: 8px;
+  word-break: break-word;
+}
+
+/* Header inside result */
+#dictResult h3 {
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+#dictResult h3 small {
+  color: var(--muted);
+  font-weight: 600;
+  margin-left: 6px;
+  font-size: 0.95rem;
+  white-space:nowrap;
+}
+
+/* Meaning group */
+#dictResult .part { margin-top: 10px; }
+#dictResult .part strong { display:block; margin-bottom:8px; font-size:14px; }
+#dictResult .item {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  margin: 8px 0;
+  background: var(--card);
+  line-height: 1.35;
+}
+#dictResult .item .muted.small { margin-top:6px; color:var(--muted); font-size:13px; }
+
+/* play/fav buttons inside result */
+.dict-play, .dict-fav {
+  border: none;
+  background: #f5f7fb;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  min-width: 44px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.dict-play:hover, .dict-fav:hover { transform: translateY(-2px); }
+
+/* Meta area (history & favorites) */
+#dictMetaWrap {
+  background: linear-gradient(180deg, rgba(0,0,0,0.01), transparent);
+  border-radius: 12px;
+  padding: 10px;
+  margin-top: 12px;
+  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: var(--shadow);
+}
+#dictMetaWrap .list { display:flex; flex-direction:column; gap:8px; }
+#dictMetaWrap .item {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  justify-content:space-between;
+  padding:8px;
+  border-radius:10px;
+  border:1px solid #f0f0f0;
+  background: var(--card);
+}
+
+/* history word button */
+#dictMetaWrap .hist-word {
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-align: left;
+}
+#dictMetaWrap .hist-word:hover { text-decoration: underline; }
+
+/* favorite toggle in meta */
+#dictMetaWrap .fav-toggle {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--yellow);
+}
+
+/* listening state for mic and other buttons (pulse) */
+#dictVoice.listening, button.listening {
+  position: relative;
+  box-shadow: 0 8px 28px rgba(26,115,232,0.08);
+  border-color: rgba(26,115,232,0.16);
+}
+#dictVoice.listening::after, button.listening::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 0 rgba(26,115,232,0.35);
+  animation: brx-mic-pulse 1.2s infinite;
+}
+@keyframes brx-mic-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(26,115,232,0.45); }
+  60%  { box-shadow: 0 0 0 10px rgba(26,115,232,0); }
+  100% { box-shadow: 0 0 0 0 rgba(26,115,232,0); }
+}
+
+/* focus outlines for keyboard users */
+#dictResult button:focus, #dictMetaWrap button:focus, #dictForm input:focus {
+  outline: 3px solid rgba(26,115,232,0.12);
+  outline-offset: 2px;
+}
+
+/* small helpers */
+.dict-result .tiny { font-size: 12px; color: var(--muted); }
+.dict-result .muted { color: var(--muted); }
+
+/* loading subtle pulse for "Searching…" state */
+.dict-loading { animation: brx-loading 1.2s ease-in-out infinite; opacity: 0.95; }
+@keyframes brx-loading {
+  0% { opacity: 0.95; transform: translateY(0); }
+  50% { opacity: 0.7; transform: translateY(2px); }
+  100% { opacity: 0.95; transform: translateY(0); }
+}
+
+/* responsive tweaks */
+@media (max-width: 520px) {
+  #dictResult .item { padding: 10px; }
+  #dictMetaWrap { padding: 8px; }
+  .row-inline input#dictInput { min-width: 0; flex: 1 1 auto; }
+  #dictionary .card { padding: 12px; }
+}
+
+/* dark-theme friendly adjustments */
+:root[data-theme="dark"] #dictResult,
+:root[data-theme="dark"] #dictMetaWrap {
+  border-color: rgba(255,255,255,0.04);
+  background: var(--card);
+}
+/* ===== Dictionary translation option ===== */
+#dictTranslate {
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #f9fafb;
+  border: 1px solid #eee;
+}
+#dictTranslate:hover {
+  background: var(--card);
+  transform: translateY(-1px);
+}
+#dictTransResult {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+/* ===== Child ABC & Quiz styles (replace previous ABC block) ===== */
+
+/* layout */
+.abc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* card / tile */
+.abc-card, .abc-tile {
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), var(--card, #fbfdff));
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 120px;
+  box-shadow: 0 6px 18px rgba(20,30,60,0.04);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: transform .16s ease, box-shadow .16s ease, box-shadow .18s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.abc-card:hover, .abc-tile:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(10,20,60,0.08); }
+
+/* visual parts */
+.abc-card .abc-letter,
+.abc-tile .letter {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  color: var(--text, #111);
+}
+.abc-card .abc-emoji,
+.abc-tile .emoji {
+  font-size: 34px;
+  line-height: 1;
+}
+.abc-card .abc-word,
+.abc-tile .word {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 4px;
+  text-align: center;
+}
+
+/* small play button inside card (if present) */
+.abc-card .play-btn,
+.abc-tile button[data-say] {
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.04);
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease;
+}
+.abc-card .play-btn:hover,
+.abc-tile button[data-say]:hover { transform: translateY(-3px); background: rgba(0,0,0,0.02); }
+
+/* preview area */
+#abcPreview { display:flex; gap:14px; align-items:center; min-height:88px; }
+#abcLetterLarge { font-size:76px; font-weight:800; line-height:1; }
+#abcImageLarge { font-size:46px; }
+#abcWordLarge { font-size:18px; color:var(--muted); margin-top:6px; }
+
+/* ensure tiles are keyboard-focusable and visible */
+.abc-card[tabindex]:focus { outline: 3px solid rgba(26,115,232,0.10); outline-offset: 3px; }
+
+/* layout tweaks on small screens */
+@media (max-width:720px){
+  #abcPreview { flex-direction:column; align-items:flex-start; gap:8px; }
+  #abcLetterLarge { font-size:56px; }
+  .abc-card { min-height:106px; padding:10px; }
+}
+
+/* selection animation */
+.abc-card.selected, .abc-tile.selected {
+  animation: brx-bounce .36s ease;
+}
+@keyframes brx-bounce {
+  0% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(-8px) scale(1.03); }
+  60% { transform: translateY(-2px) scale(1.01); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* old inline quiz prompt removed — new quiz is a separate screen */
+
+/* dark mode friendly tweaks (card-specific) */
+:root[data-theme="dark"] .abc-card,
+:root[data-theme="dark"] .abc-tile,
+:root[data-theme="dark"] #abcPreview {
+  background: #0f1720;
+  border-color: rgba(255,255,255,0.04);
+  color: #e6eef8;
+}
+
+/* small responsiveness for very small screens */
+@media (max-width:360px){
+  .abc-card { padding:8px; min-height:96px; }
+  #abcLetterLarge { font-size:46px; }
+  #abcImageLarge { font-size:34px; }
+}
+
+/* ===== Quiz screen styles ===== */
+/* ensure quiz screen is hidden by default; it will be shown by JS (or .active class) */
+#childABCQuiz { display: none; }
+#childABCQuiz.active { display: block; }
+
+/* quiz card adjustments */
+#childABCQuiz .card { padding: 14px; }
+
+/* quiz question area */
+#quizQuestion { font-size: 34px; text-align:center; min-height:92px; display:flex; align-items:center; justify-content:center; flex-direction:column; }
+
+/* options grid */
+#quizOptions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+@media (max-width:520px){
+  #quizOptions { grid-template-columns: repeat(1, 1fr); }
+}
+
+/* quiz option buttons (scoped to quiz screen so global .btn unaffected) */
+#childABCQuiz #quizOptions .btn {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: linear-gradient(180deg, #fff, #fbfdff);
+  font-weight:700;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  min-height:46px;
+}
+#childABCQuiz #quizOptions .btn:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(10,20,60,0.06); }
+
+/* disabled look */
+#childABCQuiz #quizOptions .btn[disabled] { opacity: 0.85; cursor: default; transform:none; }
+
+/* result / feedback */
+#quizResult { text-align:center; padding: 10px; }
+#quizResult #quizScore { font-size: 22px; font-weight:800; color:var(--accent,#1363ff); }
+
+/* small feedback area on quiz screen */
+#quizFeedback { margin-left:auto; color:var(--muted); font-size:13px; }
+
+/* visual highlight classes you can toggle (JS currently uses inline borders; these are optional helpers) */
+#quizOptions .option-correct { background: linear-gradient(180deg, #e9ffef, #e6fff0); border-color: #14b37d; color: #0b6b3a; }
+#quizOptions .option-wrong   { background: linear-gradient(180deg, #fff0f0, #fff6f6); border-color: #ff4d4f; color: #7a1a18; }
+
+/* small accessibility tweaks */
+#childABCQuiz select.tiny { padding:6px 8px; border-radius:8px; }
+
+/* mild elevation for quiz area */
+#quizArea { background: var(--card,#fff); padding:12px; border-radius:10px; box-shadow: 0 8px 28px rgba(10,20,40,0.04); }
+
+/* keep visuals consistent in dark mode */
+:root[data-theme="dark"] #childABCQuiz .card,
+:root[data-theme="dark"] #quizArea,
+:root[data-theme="dark"] #quizOptions .btn {
+  background: #0b1220;
+  border-color: rgba(255,255,255,0.04);
+  color: #e6eef8;
+} 
+/* If card has no text/child, don't show border */
+.module-card:empty {
+  border: none !important;
+  box-shadow: none !important;
+}
+/* Hide border until there's visible text */
+.module-card:not(:has(*:not(:empty))) {
+  border: none !important;
+  box-shadow: none !important;
+}
+/* ====== Science module styles (append to style10.css) ====== */
+.science-landing .muted { margin-bottom:8px; }
+#scienceClassGrid { display:flex; gap:10px; flex-wrap:wrap; }
+#scienceClassGrid .btn { min-width:120px; padding:12px 14px; border-radius:12px; }
+
+.quiz-container .question-num { font-weight:800; margin-bottom:6px; }
+.quiz-container .qb-question { font-size:18px; margin-bottom:12px; }
+.quiz-container .qb-options { display:grid; gap:10px; }
+.quiz-container .qb-option {
+  display:block;
+  text-align:left;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #eee;
+  cursor:pointer;
+  background:var(--card);
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.quiz-container .qb-option:hover { transform: translateY(-4px); box-shadow: 0 8px 18px rgba(16,24,40,0.06); }
+.quiz-container .qb-option.selected { border-color: rgba(26,115,232,0.18); box-shadow: 0 8px 24px rgba(26,115,232,0.06); }
+.quiz-container .qb-option.correct { border-color: var(--green); background: #eef7f1; }
+.quiz-container .qb-option.wrong { border-color: var(--red); background: #fdecea; opacity:0.95; }
+
+#scienceProgressText { font-size:13px; color:var(--muted); margin-top:6px; }
+
+/* result summary tiles */
+#scienceResultsSummary { display:flex; gap:12px; flex-wrap:wrap; align-items:stretch; }
+.science-stat { flex:1; min-width:140px; padding:12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,252,0.9)); text-align:center; box-shadow: var(--shadow); }
+.science-stat .num { font-weight:800; font-size:22px; }
+.science-stat .lbl { color:var(--muted); font-size:13px; }
+
+/* animated percentage circle fallback: use large number */
+.science-percent { font-size:42px; font-weight:900; margin:6px 0; color:var(--primary); }
+
+/* review list */
+#scienceReviewList .item { padding:12px; border:1px solid #f0f0f0; border-radius:10px; }
+#scienceReviewList .qtxt { font-weight:700; margin-bottom:8px; }
+#scienceReviewList .ans { font-size:14px; color:var(--muted); }
+
+/* small responsive tweaks */
+@media (max-width:520px) {
+  #scienceResultsSummary { flex-direction:column; }
+  .science-stat { min-width:unset; }
+}
+/* Science card icon to match style of other modules */
+.icon.i-flask {
+  background: #34c759; /* a fresh green, like science/biology */
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M9 2v2h1v7.59l-5.3 5.3a2 2 0 0 0 1.42 3.41h12.76a2 2 0 0 0 1.42-3.41l-5.3-5.3V4h1V2H9zM7.12 18l4.88-4.88V4h.01v9.12L16.88 18H7.12z"/></svg>') no-repeat center;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M9 2v2h1v7.59l-5.3 5.3a2 2 0 0 0 1.42 3.41h12.76a2 2 0 0 0 1.42-3.41l-5.3-5.3V4h1V2H9zM7.12 18l4.88-4.88V4h.01v9.12L16.88 18H7.12z"/></svg>') no-repeat center;
+  background-size: 60%;
+}
+/* Stronger green highlight for selected quiz options */
+.quiz-container .qb-option.selected {
+  border-color: var(--green);
+  background: #e6f9ec;  /* soft light green */
+  box-shadow: 0 0 0 2px rgba(52, 199, 89, 0.25), 0 6px 12px rgba(16, 24, 40, 0.06);
+  transform: translateY(-2px);
+}
+/* ==== Dark mode enhancements for quiz options ==== */
+
+/* Selected option - brighter green glow in dark mode */
+body.dark .quiz-container .qb-option.selected {
+  border-color: #28c76f;
+  background: rgba(40, 199, 111, 0.15);
+  box-shadow: 0 0 0 2px rgba(40, 199, 111, 0.35), 0 6px 12px rgba(0, 0, 0, 0.4);
+  color: #b6f2cd;
+  transform: translateY(-2px);
+}
+
+/* Correct answer after submit */
+body.dark .quiz-container .qb-option.correct {
+  border-color: #2ecc71;
+  background: rgba(46, 204, 113, 0.25);
+  color: #d4f7df;
+  font-weight: 600;
+}
+
+/* Wrong answer after submit */
+body.dark .quiz-container .qb-option.wrong {
+  border-color: #e74c3c;
+  background: rgba(231, 76, 60, 0.25);
+  color: #ffd6d2;
+  font-weight: 600;
+}
+
+/* Unselected options remain subtle in dark mode */
+body.dark .quiz-container .qb-option {
+  background: rgba(255,255,255,0.02);
+  border-color: rgba(255,255,255,0.15);
+  color: #e2e6ed;
+}
+/* === Smooth hover/press effects without scaling === */
+
+/* Base interactive styles */
+.nav, .card, .btn, .chip, .qb-option {
+  transition: box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  will-change: box-shadow, background-color, border-color;
+}
+
+/* Desktop hover – lift with shadow */
+@media (hover: hover) and (pointer: fine) {
+  .nav:hover, .card:hover, .btn:hover, .chip:hover, .quiz-container .qb-option:hover {
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    border-color: var(--primary);
+    cursor: pointer;
+  }
+}
+
+/* Active / pressed – subtle darken instead of scale */
+.nav:active, .card:active, .btn:active, .chip:active, .quiz-container .qb-option:active {
+  background-color: rgba(255,255,255,0.05); /* dark theme */
+  box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+}
+/* ==== Remove focus outline/marking from all nav/cards/buttons ==== */
+.nav:focus,
+.card:focus,
+.btn:focus,
+.chip:focus,
+.qb-option:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+/* Cartoon table buttons */
+.table-btn{
+  border-radius:14px;
+  padding:12px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:flex-start;
+  cursor:pointer;
+  min-height:88px;
+  transition: transform .12s ease, box-shadow .12s ease;
+  position:relative;
+  overflow:visible;
+}
+.table-btn:hover{ transform: translateY(-6px); box-shadow: 0 14px 28px rgba(16,24,40,0.06); }
+
+.table-emoji{
+  width:64px;
+  height:64px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  flex:0 0 64px;
+  box-shadow: 0 8px 18px rgba(16,24,40,0.06);
+  background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.2));
+}
+.table-label{ font-weight:800; font-size:16px; color:var(--text) }
+.table-sub{ font-size:13px; color:var(--muted) }
+
+/* locked overlay */
+.table-btn.locked::after{
+  content: "🔒";
+  position:absolute;
+  right:12px;
+  top:12px;
+  font-size:20px;
+}
+.table-btn.locked{ opacity:0.62; cursor:default; }
+
+/* layouts: grid already exists in your style10.css (tables-wrap),
+   ensure it uses 2 columns on small screens, 4 on desktop (if not present) */
+.tables-wrap{ display:grid; gap:12px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+@media (min-width:720px){ .tables-wrap{ grid-template-columns: repeat(4, minmax(0,1fr)); } }
+
+/* confetti */
+.brx-confetti-piece{
+  position:fixed;
+  width:10px;height:14px;border-radius:2px;
+  z-index:9999;
+  pointer-events:none;
+  opacity:0.95;
+  transform: translateY(-20px) rotate(0deg);
+  animation:brxConfettiFall 1400ms cubic-bezier(.2,.8,.2,1);
+}
+@keyframes brxConfettiFall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity:1; }
+  60% { transform: translateY(50vh) rotate(180deg); }
+  100% { transform: translateY(110vh) rotate(360deg); opacity:0; }
+}
+
+/* timeout animation for test failure/time up */
+.brx-timeout {
+  animation: brxTimeoutShake .6s ease-in-out;
+  border: 2px solid var(--red);
+}
+@keyframes brxTimeoutShake {
+  0% { transform:translateX(0) }
+  20% { transform:translateX(-8px) }
+  40% { transform:translateX(8px) }
+  60% { transform:translateX(-6px) }
+  80% { transform:translateX(6px) }
+  100% { transform:translateX(0) }
+}
+/* optional fallback modal styles (only if .modal isn't already defined) */
+.modal { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.35); z-index:2600; padding:18px; }
+.modal.hidden { display: none; }
+.modal .modal-content { max-width:440px; width:100%; border-radius:14px; padding:16px; }
+/* ======= Header Logo + Mobile Adjustments ======= */
+
+/* General logo styling */
+.brand-logo {
+  width: 42px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+/* Make logo+text align neatly */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* --- Mobile adjustments --- */
+@media (max-width: 600px) {
+
+  /* remove sticky header for mobile */
+  .appbar {
+    position: static;
+    top: auto;
+    left: auto;
+    right: auto;
+    box-shadow: none;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+
+  /* remove the extra padding meant for fixed header */
+  .app {
+    padding-top: var(--app-pad);
+  }
+
+  /* hide text, keep logo only */
+  .brand h1 {
+    display: none;
+  }
+
+  /* make logo slightly smaller for phones */
+  .brand-logo {
+    width: 36px;
+  }
+
+  /* compact header spacing */
+  .appbar {
+    padding: 8px 12px;
+  }
+
+  .chip {
+    padding: 6px 8px;
+    font-size: 14px;
+    min-width: 44px;
+  }
+}
+/* ===== Mobile header fixes: wrap actions + remove top gap ===== */
+@media (max-width: 600px) {
+  /* make header non-sticky (if not already) and allow wrapping */
+  .appbar {
+    position: static !important;
+    top: auto;
+    left: auto;
+    right: auto;
+    box-shadow: none;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;          /* allow brand + actions to wrap to next line */
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ensure brand and actions can use full width on small screens */
+  .appbar > .brand,
+  .appbar > .appbar-actions {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* brand: logo left, text hidden (you already wanted title hidden) */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+  .brand h1 { display: none; } /* keep only logo on mobile */
+
+  /* compact logo */
+  .brand-logo {
+    width: 36px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+
+  /* actions appear on a new row, left aligned; allow chips to wrap */
+  .appbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-top: 6px;
+    padding-left: 2px; /* slight visual alignment */
+  }
+
+  /* smaller, wrap-friendly chips */
+  .chip {
+    padding: 6px 8px;
+    font-size: 14px;
+    min-width: auto;
+    white-space: nowrap;
+    margin-bottom: 6px; /* gives breathing when chips wrap */
+  }
+
+  /* override the .app top padding reserved for a fixed header */
+  .app {
+    padding-top: var(--app-pad) !important; /* removes the large reserved space */
+  }
+
+  /* extra safety: ensure no leftover html/body top spacing on weird phones */
+  html, body { margin-top: 0; padding-top: 0; }
+}
+/* ===== Header mobile layout (logo left of Dark + Voice). Logout removed from header. ===== */
+@media (max-width: 600px) {
+  .appbar {
+    position: static !important; /* header scrolls on mobile */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* keep items left-aligned */
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    box-shadow: none;
+  }
+
+  /* remove reserved top padding used for fixed header on desktop */
+  .app {
+    padding-top: var(--app-pad) !important;
+  }
+
+  /* brand: logo visible, title hidden on phones for a clean compact header */
+  .brand {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:0;
+    padding:0;
+  }
+  .brand h1 { display: none; }
+
+  /* increase logo size on mobile as requested */
+  .brand-logo {
+    width: 48px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: contain;
+    box-shadow: 0 6px 18px rgba(16,24,40,0.04);
+  }
+
+  /* actions inline immediately after logo */
+  .appbar-actions {
+    display:flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left: 6px;
+    white-space: nowrap;
+    overflow: visible;
+  }
+
+  /* compact touch-friendly chips */
+  .chip {
+    padding: 8px 12px;
+    height: 44px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .chip.chip-outline {
+    background: transparent;
+    color: var(--primary);
+    border: 1.6px solid rgba(26,115,232,0.12);
+    box-shadow: none;
+  }
+
+  /* avoid any accidental top margin on some devices */
+  html, body { margin-top: 0; padding-top: 0; }
+}
+
+/* ===== Dark theme variables (toggle by adding .brx-dark to <html>) ===== */
+.brx-dark {
+  --bg: #0b1220;
+  --text: #e6eef9;
+  --muted: #9fb0cc;
+  --card: #081226;
+  --primary: #60a5fa;
+  --shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* smooth theme/color transitions */
+html, body, .app {
+  transition: background-color .25s ease, color .25s ease;
+}
+/* ===== FIX: force single-row header on mobile (logo left, buttons inline) ===== */
+@media (max-width: 600px) {
+  .appbar {
+    position: static !important;
+    display: flex !important;
+    flex-direction: row !important;   /* KEEP everything on one row */
+    flex-wrap: nowrap !important;     /* prevent wrapping to a new line */
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    box-shadow: none;
+  }
+
+  /* prevent previous rules from forcing brand/actions to 100% width */
+  .appbar > .brand,
+  .appbar > .appbar-actions {
+    width: auto !important;
+    max-width: none !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* brand */
+  .brand { display:flex; align-items:center; gap:10px; margin:0; padding:0; }
+  .brand h1 { display: none; }          /* keep only logo on phones */
+  .brand-logo {
+    width: 48px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: contain;
+    box-shadow: 0 6px 18px rgba(16,24,40,0.04);
+  }
+
+  /* actions inline immediately after logo, allow horizontal scroll if needed */
+  .appbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+    white-space: nowrap;
+    overflow-x: auto;                    /* avoid wrapping; scroll if too tight */
+    -webkit-overflow-scrolling: touch;
+  }
+  /* hide scrollbar on WebKit for clean look */
+  .appbar-actions::-webkit-scrollbar { display: none; }
+
+  /* compact chip styling */
+  .chip {
+    padding: 8px 10px;
+    height: 40px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  /* safety: remove big reserved top padding for desktop fixed header */
+  .app { padding-top: var(--app-pad) !important; }
+
+  /* avoid weird top spacing on some phones */
+  html, body { margin-top: 0; padding-top: 0; }
+}
+
+/* Extra: on very narrow phones show icons only (optional but prevents overflow) */
+@media (max-width: 360px) {
+  .chip .chip-label { display: none; }   /* show icons only */
+  .chip .chip-icon  { display: inline-block; font-size: 18px; }
+  .chip { padding: 8px; }
+}
+/* ===== Fix button text colors for mobile header ===== */
+
+/* Base color correction for normal light theme */
+.chip {
+  color: #1a1a1a; /* readable dark text */
+}
+
+/* primary chip (filled one – usually Voice ON) */
+.chip:not(.chip-outline) {
+  background: var(--primary, #1a73e8);
+  color: #ffffff; /* white text on blue background */
+  border: none;
+}
+
+/* outline variant (e.g. Dark / Light button) */
+.chip.chip-outline {
+  background: #ffffff;
+  color: #1a73e8;
+  border: 1.6px solid rgba(26,115,232,0.2);
+}
+
+/* Hover/active feedback (optional) */
+.chip:active {
+  opacity: 0.9;
+  transform: scale(0.97);
+  transition: all 0.1s ease;
+}
+
+/* --- Dark mode adjustments --- */
+.brx-dark .chip {
+  color: #e6eef9; /* readable text on dark bg */
+}
+
+.brx-dark .chip:not(.chip-outline) {
+  background: #2563eb; /* brighter blue in dark mode */
+  color: #fff;
+}
+
+.brx-dark .chip.chip-outline {
+  background: rgba(255,255,255,0.08);
+  color: #60a5fa;
+  border: 1.6px solid rgba(96,165,250,0.3);
+}
+
+/* ===== Final Dark Mode Button Contrast Fix ===== */
+
+/* General chip colors for normal (light) mode */
+.chip {
+  color: #1a1a1a;
+  transition: all 0.25s ease;
+}
+
+.chip:not(.chip-outline) {
+  background: var(--primary, #1a73e8);
+  color: #fff;
+  border: none;
+}
+
+.chip.chip-outline {
+  background: #fff;
+  color: #1a73e8;
+  border: 1.6px solid rgba(26,115,232,0.2);
+}
+
+/* === DARK MODE === */
+.brx-dark .chip {
+  transition: all 0.25s ease;
+}
+
+/* filled (Voice ON) stays bright blue on dark */
+.brx-dark .chip:not(.chip-outline) {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+/* outline (Light toggle) must have contrast in dark mode */
+.brx-dark .chip.chip-outline {
+  background: rgba(255,255,255,0.08);   /* subtle dark surface */
+  color: #ffffff;                       /* bright text/icon */
+  border: 1.6px solid rgba(255,255,255,0.25);
+}
+
+/* optional hover/press feedback for both modes */
+.chip:active {
+  opacity: 0.9;
+  transform: scale(0.97);
+}
+/* ===== FINAL POLISHED MOBILE HEADER FIX ===== */
+@media (max-width: 600px) {
+  /* Compact, balanced single-line layout */
+  .appbar {
+    position: static !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px;
+    padding: 6px 12px;
+    background: var(--bg);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    box-shadow: none;
+  }
+
+  .appbar > .brand,
+  .appbar > .appbar-actions {
+    width: auto !important;
+    max-width: none !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* Logo: crisp, proportionate */
+  .brand {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+  }
+  .brand h1 { display: none; }
+  .brand-logo {
+    width: 42px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: contain;
+    margin-right: 6px;
+  }
+
+  /* Buttons inline next to logo */
+  .appbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    margin-left: 6px;
+    white-space: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .appbar-actions::-webkit-scrollbar { display: none; }
+
+  /* === Modern small pill buttons === */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 14px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+
+  /* Outline (Dark/Light) button */
+  .chip.chip-outline {
+    background: #fff;
+    color: #1a73e8;
+    border: 1.6px solid rgba(26,115,232,0.15);
+  }
+
+  /* Filled (Voice ON) button */
+  .chip:not(.chip-outline) {
+    background: #1a73e8;
+    color: #fff;
+  }
+
+  /* Tap feedback */
+  .chip:active {
+    transform: scale(0.96);
+    opacity: 0.95;
+  }
+
+  /* Theme-aware contrast for dark mode */
+  .brx-dark .chip.chip-outline {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border: 1.6px solid rgba(255,255,255,0.25);
+  }
+  .brx-dark .chip:not(.chip-outline) {
+    background: #2563eb;
+    color: #fff;
+  }
+
+  /* Prevent extra page top padding */
+  .app { padding-top: var(--app-pad) !important; }
+  html, body { margin-top: 0; padding-top: 0; }
+}
+
+/* Optional: smoother color transitions */
+.chip, .appbar {
+  transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+}
+
+/* ===== UNIVERSAL FIX for MOBILE BUTTON TEXT VISIBILITY ===== */
+
+/* Reset and unify button structure */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: 999px;
+  border: 1.6px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+/* ===== LIGHT MODE ===== */
+body:not(.brx-dark) .chip.chip-outline {
+  background: #ffffff;
+  color: #1a73e8 !important; /* readable blue text */
+  border-color: rgba(26, 115, 232, 0.15);
+}
+
+body:not(.brx-dark) .chip:not(.chip-outline) {
+  background: #1a73e8;
+  color: #ffffff !important; /* white readable text */
+}
+
+/* ===== DARK MODE ===== */
+body.brx-dark .chip.chip-outline {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+body.brx-dark .chip:not(.chip-outline) {
+  background: #2563eb;
+  color: #ffffff !important;
+}
+
+/* Prevent accidental icon hiding */
+.chip * {
+  display: inline !important;
+  visibility: visible !important;
+  color: inherit !important;
+}
+
+/* Press feedback */
+.chip:active {
+  transform: scale(0.96);
+  opacity: 0.95;
+}
+
+/* ===== MOBILE HEADER ALIGNMENT ===== */
+@media (max-width: 600px) {
+  .appbar {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 6px 12px;
+    gap: 8px;
+    background: var(--bg);
+    box-shadow: none;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    margin: 0;
+  }
+
+  .brand h1 { display: none; }
+
+  .brand-logo {
+    width: 42px;
+    height: auto;
+    margin-right: 4px;
+  }
+
+  .appbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+/* ==========================
+   BRX Community Chat — APPENDED STYLES
+   Mobile-first, responsive for phone + desktop
+   Paste at the end of your stylesheet
+   ========================== */
+
+/* Color / sizing tokens (easy to tweak) */
+:root{
+  --brx-bg: #f6f8fb;
+  --brx-card: #ffffff;
+  --brx-accent: #2563eb;        /* blue */
+  --brx-accent-600: #1e40af;
+  --brx-text: #0f172a;
+  --brx-muted: #64748b;
+  --brx-bubble: #f1f5f9;
+  --brx-border: rgba(15,23,42,0.06);
+  --brx-radius: 12px;
+  --brx-radius-sm: 8px;
+  --brx-shadow: 0 6px 18px rgba(2,6,23,0.06);
+  --brx-gap: 12px;
+  --brx-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Scope everything to the community section to avoid global overrides */
+#community{
+  box-sizing: border-box;
+  font-family: var(--brx-font);
+  color: var(--brx-text);
+  padding: 14px;
+}
+
+/* Toolbar */
+#community .toolbar{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+#community .toolbar h2{
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+#community .menu-btn{
+  background: transparent;
+  border: 1px solid var(--brx-border);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+#community .username-area{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+#community .username-area .muted,
+#community .muted.tiny { color: var(--brx-muted); font-size: 0.8rem; }
+#community #myChatName { font-weight: 700; font-size: 0.95rem; }
+
+/* Card container */
+#community .card{
+  background: var(--brx-card);
+  border-radius: var(--brx-radius);
+  padding: 12px;
+  box-shadow: var(--brx-shadow);
+  border: 1px solid var(--brx-border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 420px; /* base height on mobile */
+}
+
+/* Tabs */
+#community .tabs{
+  display:flex;
+  gap:8px;
+  overflow:auto;
+  -webkit-overflow-scrolling: touch;
+}
+#community .tab{
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--brx-accent-600);
+}
+#community .tab.active{
+  background: rgba(37,99,235,0.08);
+  border-color: rgba(37,99,235,0.12);
+  color: var(--brx-accent-600);
+}
+
+/* Chat list: flexible and scrollable */
+#community .chat-list{
+  display: block;
+  overflow-y: auto;
+  padding: 8px;
+  gap: var(--brx-gap);
+  flex: 1 1 auto;
+  min-height: 220px;
+  max-height: calc(100vh - 320px);
+}
+
+/* Individual message */
+#community .chat-msg{
+  display:flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  transition: transform .12s ease, opacity .12s ease;
+}
+#community .chat-badge{
+  flex: 0 0 44px;
+  width:44px;
+  height:44px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(37,99,235,0.12), rgba(37,99,235,0.04));
+  color: var(--brx-accent-600);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size: 0.95rem;
+  border: 1px solid rgba(37,99,235,0.06);
+}
+#community .chat-bubble{
+  background: var(--brx-bubble);
+  border-radius: var(--brx-radius-sm);
+  padding: 8px 10px;
+  box-shadow: none;
+  border: 1px solid rgba(2,6,23,0.03);
+  max-width: calc(100% - 64px);
+}
+#community .chat-meta{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom:6px;
+}
+#community .chat-meta .name{
+  font-weight:700;
+  font-size: 0.92rem;
+  color: var(--brx-text);
+}
+#community .chat-meta .time{
+  color: var(--brx-muted);
+  font-size: 0.76rem;
+  font-weight:500;
+}
+#community .chat-text{
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: var(--brx-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 8px;
+}
+#community .chat-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+#community .like-btn{
+  background: transparent;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight:600;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color: var(--brx-accent-600);
+}
+#community .like-btn:focus{
+  outline: 2px solid rgba(37,99,235,0.18);
+  outline-offset: 2px;
+}
+
+/* Chat input area */
+#community .chat-input{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  padding-top:6px;
+  border-top: 1px dashed rgba(15,23,42,0.03);
+}
+#community .chat-input input[type="text"]{
+  flex:1 1 auto;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--brx-border);
+  font-size: 0.95rem;
+  background: #fff;
+  box-shadow: none;
+}
+#community .chat-input input[type="text"]::placeholder{ color: #94a3b8; }
+#community .chat-input .btn{
+  border-radius: 10px;
+  padding: 9px 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+#community .chat-input .btn.btn-primary{
+  background: var(--brx-accent);
+  color: white;
+  font-weight:700;
+  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 6px 14px rgba(37,99,235,0.08);
+}
+
+/* Status text */
+#community #chatStatus{ font-size: 0.82rem; color: var(--brx-muted); margin: 6px 0 0 0; }
+
+/* Template hidden */
+#chatMessageTemplate{ display:none; }
+
+/* Modal (chat name) */
+#chatNameModal{
+  position: fixed;
+  inset: 0;
+  display: none; /* toggled via JS */
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  background: rgba(2,6,23,0.45);
+}
+#chatNameModal[aria-hidden="false"]{ display:flex; }
+#chatNameModal .modal-wrap{
+  width: 94%;
+  max-width: 420px;
+  background: var(--brx-card);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: var(--brx-shadow);
+  border: 1px solid var(--brx-border);
+}
+#chatNameModal header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+#chatNameModal h3{ margin:0; font-size:1.05rem; }
+#chatNameModal input[type="text"]{
+  width:100%;
+  padding:10px 12px;
+  margin-top:8px;
+  border-radius:10px;
+  border:1px solid var(--brx-border);
+  font-size: 0.95rem;
+}
+#chatNameModal footer{
+  display:flex;
+  gap:8px;
+  justify-content:flex-end;
+  margin-top:12px;
+}
+
+/* small screens finished — Desktop tweaks */
+@media (min-width: 768px){
+  #community{ padding: 18px 22px; }
+  #community .card{
+    min-height: 520px;
+    max-width: 920px;
+    margin: 0 auto;
+  }
+  #community .chat-list{ max-height: calc(100vh - 420px); }
+  #community .chat-badge{ width:48px; height:48px; border-radius:14px; font-size:1rem; }
+  #community .chat-bubble{ padding: 10px 12px; border-radius: 14px; }
+  #community .chat-input input[type="text"]{ font-size:1rem; padding:12px 14px; }
+}
+/* ==========================
+   🌙 Dark Mode for Community Chat
+   ========================== */
+
+body.dark #community,
+.dark-mode #community {
+  --brx-bg: #0f172a;
+  --brx-card: #1e293b;
+  --brx-accent: #3b82f6;
+  --brx-accent-600: #60a5fa;
+  --brx-text: #f8fafc;
+  --brx-muted: #94a3b8;
+  --brx-bubble: #334155;
+  --brx-border: rgba(255,255,255,0.08);
+  --brx-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+body.dark #community .card,
+.dark-mode #community .card {
+  background: var(--brx-card);
+  border-color: var(--brx-border);
+  color: var(--brx-text);
+}
+
+body.dark #community .chat-bubble,
+.dark-mode #community .chat-bubble {
+  background: var(--brx-bubble);
+  border-color: rgba(255,255,255,0.08);
+}
+
+body.dark #community .chat-text,
+.dark-mode #community .chat-text {
+  color: var(--brx-text);
+}
+
+body.dark #community .chat-meta .time,
+body.dark #community .muted,
+.dark-mode #community .chat-meta .time,
+.dark-mode #community .muted {
+  color: var(--brx-muted);
+}
+
+body.dark #community .tab,
+.dark-mode #community .tab {
+  color: var(--brx-accent-600);
+  background: transparent;
+  border-color: transparent;
+}
+body.dark #community .tab.active,
+.dark-mode #community .tab.active {
+  background: rgba(59,130,246,0.15);
+  border-color: rgba(59,130,246,0.25);
+}
+
+body.dark #community .chat-input input[type="text"],
+.dark-mode #community .chat-input input[type="text"] {
+  background: #0f172a;
+  border-color: rgba(255,255,255,0.08);
+  color: var(--brx-text);
+}
+
+body.dark #community .chat-input input::placeholder,
+.dark-mode #community .chat-input input::placeholder {
+  color: #64748b;
+}
+
+body.dark #community .btn.btn-primary,
+.dark-mode #community .btn.btn-primary {
+  background: var(--brx-accent);
+  border-color: rgba(255,255,255,0.08);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(59,130,246,0.25);
+}
+
+body.dark #community .like-btn,
+.dark-mode #community .like-btn {
+  color: var(--brx-accent-600);
+}
+
+body.dark #chatNameModal .modal-wrap,
+.dark-mode #chatNameModal .modal-wrap {
+  background: var(--brx-card);
+  color: var(--brx-text);
+  border-color: var(--brx-border);
+}
+/* ==========================
+   🧭 Header Styling Enhancements for Community Chat
+   ========================== */
+
+/* Centered title in a stylish box */
+#community .toolbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* center title */
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--brx-border);
+  background: var(--brx-card);
+  border-radius: var(--brx-radius);
+  box-shadow: var(--brx-shadow);
+}
+
+#community .toolbar h2 {
+  background: linear-gradient(90deg, var(--brx-accent) 0%, var(--brx-accent-600) 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Menu button styling */
+#community .menu-btn {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--brx-accent);
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+#community .menu-btn:hover {
+  background: var(--brx-accent-600);
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Username area refinement */
+#community .username-area {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(37,99,235,0.08);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--brx-accent-600);
+}
+#community .username-area strong {
+  color: var(--brx-text);
+  font-weight: 700;
+}
+#community .username-area .muted {
+  color: var(--brx-muted);
+  font-size: 0.8rem;
+}
+
+/* Button to edit username */
+#community #changeChatNameBtn {
+  background: transparent;
+  border: none;
+  font-size: 0.8rem;
+  color: var(--brx-accent-600);
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color 0.2s ease;
+}
+#community #changeChatNameBtn:hover {
+  color: var(--brx-accent);
+}
+
+/* ==========================
+   🌙 Dark Mode adjustments for header
+   ========================== */
+body.dark #community .toolbar,
+.dark-mode #community .toolbar {
+  background: var(--brx-card);
+  border-color: var(--brx-border);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+
+body.dark #community .toolbar h2,
+.dark-mode #community .toolbar h2 {
+  background: linear-gradient(90deg, var(--brx-accent-600), var(--brx-accent));
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(59,130,246,0.35);
+}
+
+body.dark #community .menu-btn,
+.dark-mode #community .menu-btn {
+  background: var(--brx-accent-600);
+  color: #fff;
+  border: none;
+}
+body.dark #community .menu-btn:hover,
+.dark-mode #community .menu-btn:hover {
+  background: var(--brx-accent);
+}
+
+body.dark #community .username-area,
+.dark-mode #community .username-area {
+  background: rgba(59,130,246,0.15);
+  color: var(--brx-accent-600);
+}
+body.dark #community .username-area strong,
+.dark-mode #community .username-area strong {
+  color: #f1f5f9;
+}
+/* ==========================
+   📱 Fix Overlapping on Mobile for Community Chat Toolbar
+   ========================== */
+
+/* Make toolbar responsive and spaced properly */
+#community .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* spread left, center, right */
+  gap: 6px;
+  padding: 8px 10px;
+  flex-wrap: wrap; /* allow wrap on small screens */
+  position: relative;
+}
+
+/* Keep menu button and username aligned in one row */
+#community .menu-btn {
+  position: relative;
+  transform: none;
+  left: auto;
+  top: auto;
+  flex-shrink: 0;
+}
+
+/* Center title naturally (not absolute) */
+#community .toolbar h2 {
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  background: linear-gradient(90deg, var(--brx-accent), var(--brx-accent-600));
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Username area stays to the right but wraps neatly on small screens */
+#community .username-area {
+  position: relative;
+  right: auto;
+  top: auto;
+  transform: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+/* On very small screens (<400px), stack toolbar elements */
+@media (max-width: 400px) {
+  #community .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    gap: 8px;
+  }
+
+  #community .menu-btn,
+  #community .username-area {
+    align-self: center;
+  }
+
+  #community .toolbar h2 {
+    font-size: 0.95rem;
+    padding: 6px 8px;
+  }
+}
